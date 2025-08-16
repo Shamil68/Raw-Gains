@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce - Signup</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+            text-align: left;
+            margin: 5px 0 10px 0;
+        }
+        .form-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .form-box h2 {
+            margin-bottom: 20px;
+        }
+        .form-box input {
+            width: 93%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-box button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-box button:hover {
+            background-color: #218838;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2>Signup</h2>
+
+            <form id="signup-form" action="/user/signup" method="POST">
+                <input type="text" name="username" placeholder="Username" id="username">
+                <div class="error" id="username-error"></div>
+                <input type="email" name="email" placeholder="Email" id="email">
+                <div class="error" id="email-error"></div>
+                <input type="tel" name="phone" placeholder="Phone" id="phone">
+                <div class="error" id="phone-error"></div>
+
+                <div class="password-container" style="position: relative; width: 250px;">
+                <input type="password" name="password" id="password" placeholder="Password" style="width:100%; padding-right: 40px;">
+                <div class="error" id="password-error"></div>
+                <i class="fas fa-eye" id="togglePassword" style="position:absolute; right:-30px; top:50%; transform:translateY(-50%); cursor:pointer;"></i>
+                </div>
+                
+                <div style="position: relative;">
+                <input type="password" name="confirmPassword" placeholder="Confirm Password" id="confirmPassword">
+                <div class="error" id="confirmPassword-error"></div>
+                <i class="fas fa-eye" id="toggleConfirmPassword" style="position:absolute; right:17px; top:50%; transform:translateY(-50%); cursor:pointer;"></i>    
+                </div>
+
+                <button type="submit">Signup</button>
+                <p>Already have an account? <a href="/login">Login here</a></p>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        document.getElementById('togglePassword').addEventListener('click',()=>{
+            const passwordField = document.getElementById('password')
+            const type = passwordField.type === 'password'?'text':'password'
+            passwordField.type = type
+            this.classList.toggle('fa-eye-slash')
+        })
+
+        document.getElementById('toggleConfirmPassword').addEventListener('click',()=>{
+        const passwordField = document.getElementById('confirmPassword')
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        this.classList.toggle('fa-eye-slash');
+    });
+        
+
+
+        const form = document.getElementById('signup-form');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            document.querySelectorAll('.error').forEach(element => element.textContent = "");
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            let isValid = true;
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^[0-9]{10}$/;
+
+            if (!username) {
+                document.getElementById('username-error').textContent = 'Username is required';
+                isValid = false;
+            } else if (username.length < 3) {
+                document.getElementById('username-error').textContent = 'Username must have at least 3 characters';
+                isValid = false;
+            }
+
+            if (!email) {
+                document.getElementById('email-error').textContent = 'Email is required';
+                isValid = false;
+            } else if (!emailRegex.test(email)) {
+                document.getElementById('email-error').textContent = 'Email must be valid';
+                isValid = false;
+            }
+
+            if (!phone) {
+                document.getElementById('phone-error').textContent = 'Phone number is required';
+                isValid = false;
+            } else if (!phoneRegex.test(phone)) {
+                document.getElementById('phone-error').textContent = 'Phone number must be valid';
+                isValid = false;
+            }
+
+            if (!password) {
+                document.getElementById('password-error').textContent = 'Password is required';
+                isValid = false;
+            } else if (password.length < 6) {
+                document.getElementById('password-error').textContent = 'Password must have at least 6 characters';
+                isValid = false;
+            }
+
+            if (!confirmPassword) {
+                document.getElementById('confirmPassword-error').textContent = 'Confirm Password is required';
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                document.getElementById('confirmPassword-error').textContent = 'Passwords do not match';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            try {
+                console.log(`Submitting signup: username=${username}, email=${email}`); // Debug log
+                const res = await fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ username, email: email.toLowerCase(), phone, password, confirmPassword })
+                });
+
+                const data = await res.json();
+
+                if (res.status === 400) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: data.error || data.message
+                    });
+                } else if (res.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Signup successful',
+                        text: 'Please verify your OTP'
+                    }).then(() => {
+                        window.location.href = data.redirect;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Something went wrong',
+                        text: data.error || data.message || 'Please try again'
+                    });
+                }
+            } catch (error) {
+                console.error('Signup fetch error:', error); // Debug log
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Server not reachable'
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
+

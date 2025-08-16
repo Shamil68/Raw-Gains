@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RawGains - Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .header {
+            background-color: #28a745;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header .logo {
+            font-size: 1.5em;
+            color: white;
+            font-weight: bold;
+        }
+        .header .logo span {
+            color: #ffcc00;
+        }
+        .header a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        .header a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            padding: 20px;
+            text-align: center;
+        }
+        .welcome {
+            margin-bottom: 30px;
+        }
+        .welcome h1 {
+            color: #333;
+        }
+        .dashboard-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .dashboard-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .dashboard-content p {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Raw<span>Gains</span></div>
+        <a href="/admin/logout">Logout</a>
+    </div>
+
+    <div class="container">
+        <div class="welcome">
+            <h1>Welcome, <%= user.username %>!</h1>
+            <p>Manage your RawGains store here.</p>
+        </div>
+        <div class="dashboard-content">
+            <h2>Admin Dashboard</h2>
+            <p>This is the admin panel for managing products, users, and more. Features coming soon!</p>
+        </div>
+    </div>
+
+    <script>
+        // Placeholder for future dashboard functionality
+    </script>
+</body>
+</html>
