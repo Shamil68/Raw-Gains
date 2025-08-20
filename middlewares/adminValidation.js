@@ -23,19 +23,25 @@ const adminLoginMiddleware = async(req,res,next)=>{
     }
 }
 
+
+// Allow only logged-in admin for pages like /dashboard
 const allowOnlyLoggedInAdmin = (req,res,next)=>{
     if(!req.session.admin || !req.session.admin.id){
-        return res.redirect('/admin-login')
+        return res.redirect('/admin/admin-login')
     }
     next()
 }
 
+
+// Prevent already logged-in admin from accessing login/signup
 const preventAuthForLoggedUsers = (req,res,next)=>{
     if(req.session.admin){
-        return res.redirect('/dashboard')
+        return res.redirect('/admin/dashboard')
     }
     next()
 }
+
+
 
 module.exports ={
     adminLoginMiddleware,

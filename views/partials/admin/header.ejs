@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RawGains Admin | <%= currentPage === 'dashboard' ? 'Dashboard' : currentPage === 'customers' ? 'Customers' : currentPage === 'categories' ? 'Categories' : currentPage === 'products' ? 'Products' : 'Add Product' %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B00;
+            --primary-light: #FF8C42;
+            --dark: #121212;
+            --dark-light: #1E1E1E;
+            --light: #FFFFFF;
+            --gray: #757575;
+            --gray-light: #EEEEEE;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .admin-container {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Vertical Navigation */
+        .vertical-nav {
+            background-color: var(--dark);
+            color: var(--light);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .nav-logo {
+            margin-bottom: 2.5rem;
+        }
+
+        .nav-logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .nav-menu a {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    color: inherit;
+}
+
+.nav-menu a:hover, .nav-menu a.active {
+    background-color: rgba(255, 107, 0, 0.1);
+    text-decoration: none;
+}
+
+.nav-menu a.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background-color: var(--primary);
+}
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.75rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 107, 0, 0.1);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+            color: var(--gray);
+        }
+
+        .nav-item:hover .nav-icon,
+        .nav-item.active .nav-icon {
+            color: var(--primary);
+        }
+
+        .nav-text {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .nav-item:hover .nav-text,
+        .nav-item.active .nav-text {
+            color: var(--light);
+        }
+
+        /* Top Header */
+        .top-header {
+            background-color: var(--light);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: var(--gray-light);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            width: 400px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            padding: 0.5rem;
+            outline: none;
+        }
+
+        .search-bar i {
+            color: var(--gray);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 2rem;
+            top: 70px;
+            background-color: var(--light);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            overflow: hidden;
+            display: none;
+            z-index: 101;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--gray-light);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            color: var(--gray);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--gray-light);
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Vertical Navigation -->
+        <nav class="vertical-nav">
+            <div class="nav-logo">
+                <img src="/img/shopping-cart/rawgains-logo.jpg" alt="RawGains">
+            </div>
+            
+            <div class="nav-menu">
+                <a href="/admin/dashboard" class="nav-item <%= currentPage === 'dashboard' ? 'active' : '' %>">
+                    <i class="fas fa-chart-pie nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/admin/customers" class="nav-item <%= currentPage === 'customers' ? 'active' : '' %>">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span class="nav-text">Customers</span>
+                </a>
+                <a href="/admin/categories" class="nav-item <%= currentPage === 'categories' ? 'active' : '' %>">
+                    <i class="fas fa-tags nav-icon"></i>
+                    <span class="nav-text">Categories</span>
+                </a>
+                <a href="/admin/products" class="nav-item <%= currentPage === 'products' ? 'active' : '' %>">
+                    <i class="fas fa-box nav-icon"></i>
+                    <span class="nav-text">Products</span>
+                </a>
+                <a href="/admin/products/add" class="nav-item <%= currentPage === 'add-product' ? 'active' : '' %>">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <span class="nav-text">Add product</span>
+                </a>
+            </div>
+        </nav>
+
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <!-- <span class="notification-badge"></span> -->
+                    </div>
+                    
+                    <div class="user-profile" id="userDropdown">
+                        <img src="/img/shopping-cart/rawgains-logo.jpg" alt="Admin" class="user-avatar">
+                        <span class="user-name">Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <!-- Dropdown Menu -->
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </div>
+                    <div class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="confirmAdminLogout(event)">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </div>
+                </div>
+            </header>

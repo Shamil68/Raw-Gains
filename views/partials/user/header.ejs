@@ -1,0 +1,298 @@
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!-- //ff3d3d -->
+ <!-- ffd700 -->
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #ff3d3d 0%, #ffd700 170%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --glass-bg: rgba(222, 12, 12, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar {
+        background: var(--primary-gradient);
+        padding: 1rem 5%;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .logo {
+        font-size: 2rem;
+        font-weight: 900;
+        color: white;
+        text-decoration: none;
+        background: linear-gradient(135deg, #fff, #a0aec0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    .menu-toggle {
+        display: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .nav-links {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-links li {
+        margin-left: 2rem;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .nav-links a::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--secondary-gradient);
+        transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+        width: 100%;
+    }
+
+    .nav-links a:hover {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .icons {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .icon, .signup {
+        color: white;
+        font-size: 1.2rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .icon:hover, .signup:hover {
+        transform: scale(1.1);
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-toggle {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .dropdown-toggle i {
+        font-size: 0.9rem;
+        transition: transform 0.3s ease;
+    }
+
+    .dropdown.active .dropdown-toggle i {
+        transform: rotate(180deg);
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        min-width: 160px;
+        border-radius: 12px;
+        box-shadow: var(--shadow-soft);
+        z-index: 1000;
+        right: 0;
+        top: 100%;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+
+    .dropdown.active .dropdown-content {
+        display: block;
+    }
+
+    .dropdown-content a {
+        color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        font-weight: 500;
+        transition: background 0.3s ease;
+    }
+
+    .dropdown-content a:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .menu-toggle {
+            display: block;
+        }
+        .nav-links {
+            flex-direction: column;
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+        }
+        .nav-links.active {
+            max-height: 500px;
+            padding: 1rem;
+        }
+        .nav-links li {
+            margin: 0.8rem 0;
+            text-align: center;
+        }
+        .icons {
+            margin-left: auto;
+            gap: 1rem;
+        }
+    }
+</style>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">Raw<span style="background: var(--secondary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Gains</span></a>
+        <div class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/shop">Shop</a></li>
+            <li><a href="/categories">Categories</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+        <div class="icons">
+            <a href="#" class="fas fa-search icon"></a>
+            <a href="/cart" class="fas fa-shopping-cart icon"></a>
+            
+            <% if (user) { %>
+                <div class="dropdown" id="user-dropdown">
+                    <a href="#" class="dropdown-toggle">
+                        <% if (user.profilePicture) { %>
+                            <img src="<%= user.profilePicture %>" alt="Profile" class="user-avatar">
+                        <% } else { %>
+                            <i class="fas fa-user-circle"></i>
+                        <% } %>
+                        <%= user.name || user.username %>
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-content">
+                        <a href="/profile"><i class="fas fa-user me-2"></i>Profile</a>
+                        <a href="/orders"><i class="fas fa-shopping-bag me-2"></i>Orders</a>
+                        <a href="/wishlist"><i class="fas fa-heart me-2"></i>Wishlist</a>
+                        <a href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
+                        <a href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                    </div>
+                </div>
+            <% } else { %>
+                <a class="signup" href="/signup">
+                    <i class="fas fa-user-plus me-1"></i>Sign Up
+                </a>
+                <a class="signup" href="/login">
+                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                </a>
+            <% } %>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Mobile menu toggle
+    document.getElementById('menu-toggle').addEventListener('click', function () {
+        document.getElementById('nav-links').classList.toggle('active');
+    });
+
+    // User dropdown toggle
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdown = document.getElementById('user-dropdown');
+        if (dropdown) {
+            const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+            const dropdownContent = dropdown.querySelector('.dropdown-content');
+
+            dropdownToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (e) {
+                if (dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+
+            // Close dropdown when clicking on a dropdown item
+            dropdownContent.querySelectorAll('a').forEach(item => {
+                item.addEventListener('click', function() {
+                    dropdown.classList.remove('active');
+                });
+            });
+        }
+    });
+
+    // Close mobile menu when clicking on a link
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', function() {
+            document.getElementById('nav-links').classList.remove('active');
+        });
+    });
+</script>   

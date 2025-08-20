@@ -1,0 +1,93 @@
+            <!-- Footer -->
+            <footer class="admin-footer">
+                <div class="footer-content">
+                    <p>&copy; 2023 RawGains Admin. All rights reserved.</p>
+                    <div class="footer-links">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Help Center</a>
+                    </div>
+                </div>
+            </footer>
+
+            <style>
+                .admin-footer {
+                    background-color: var(--light);
+                    border-top: 1px solid var(--gray-light);
+                    padding: 1.5rem 2rem;
+                    margin-top: auto;
+                }
+
+                .footer-content {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    max-width: 1400px;
+                    margin: 0 auto;
+                }
+
+                .footer-content p {
+                    color: var(--gray);
+                    font-size: 0.85rem;
+                }
+
+                .footer-links {
+                    display: flex;
+                    gap: 1.5rem;
+                }
+
+                .footer-links a {
+                    color: var(--gray);
+                    text-decoration: none;
+                    font-size: 0.85rem;
+                    transition: color 0.3s ease;
+                }
+
+                .footer-links a:hover {
+                    color: var(--primary);
+                }
+            </style>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Toggle dropdown menu
+        document.getElementById('userDropdown').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('dropdownMenu').classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            document.getElementById('dropdownMenu').classList.remove('show');
+        });
+
+        function confirmAdminLogout(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: "Logout Confirmation",
+                text: "Are you sure you want to logout from admin panel?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#FF6B00",
+                cancelButtonColor: "#757575",
+                confirmButtonText: "Yes, Logout",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/admin/logout";
+                }
+            });
+        }
+
+        // Activate nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -67,7 +67,7 @@ const forgotPasswordMiddleware = async(req,res,next)=>{
     try{
         const {email} = req.body
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if(!email || !emailRegex.test(email)){
             return res.status(400).json({error:'Email required & it must be valid'})
@@ -100,8 +100,25 @@ const resetPasswordMiddleware = async(req,res,next)=>{
     }
 }
 
+const checkBlockUser = async(req,res,next)=>{
+    if(req.session.user){
+        try{
+            const user = await User.findById(req.session.user.id)
+            if(user && user.isBlocked){
 
-// For pages like /login, /signup: prevent logged-in users
+                delete req.session.user
+                req.session.blockedMessage = 'Your account has been blocked'
+                res.redirect('/login')
+            }
+        }catch(error){
+            return res.status(500).json({success:false,message:'Server error'})
+        }
+    }
+    next()
+}
+
+
+// Prevent already logged-in users from accessing login/signup
 const preventAuthForLoggedUsers = (req, res, next) => {
   if (req.session.user) {
     return res.redirect('/home');
@@ -109,12 +126,24 @@ const preventAuthForLoggedUsers = (req, res, next) => {
   next();
 };
 
-// For pages like /home: allow only logged-in users
-const allowOnlyLoggedIn = (req, res, next) => {
+
+
+// Allow only logged-in users for pages like /home
+const allowOnlyLoggedIn = async(req, res, next) => {
   if (!req.session.user) {
     return res.redirect('/login');
   }
-  next();
+
+  const user = await User.findById(req.session.user._id)
+
+  if(!user || user.isBlocked){
+    delete req.session.user
+        return res.redirect('/login')
+
+    
+  }
+  next()
+
 };
 
 
@@ -128,6 +157,8 @@ module.exports = {
     forgotPasswordMiddleware,
     resetPasswordMiddleware,
     allowOnlyLoggedIn,
-    preventAuthForLoggedUsers}
+    preventAuthForLoggedUsers,
+    checkBlockUser
+}
 
 

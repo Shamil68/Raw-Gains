@@ -1,86 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RawGains - Admin Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        .header {
-            background-color: #28a745;
-            padding: 15px;
-            text-align: center;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header .logo {
-            font-size: 1.5em;
-            color: white;
-            font-weight: bold;
-        }
-        .header .logo span {
-            color: #ffcc00;
-        }
-        .header a {
-            color: white;
-            text-decoration: none;
-            font-size: 1.2em;
-        }
-        .header a:hover {
-            text-decoration: underline;
-        }
-        .container {
-            padding: 20px;
-            text-align: center;
-        }
-        .welcome {
-            margin-bottom: 30px;
-        }
-        .welcome h1 {
-            color: #333;
-        }
-        .dashboard-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .dashboard-content h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .dashboard-content p {
-            color: #555;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="logo">Raw<span>Gains</span></div>
-        <a href="/admin/logout">Logout</a>
-    </div>
+    <%- include("../../views/partials/admin/header") %>
 
-    <div class="container">
-        <div class="welcome">
-            <h1>Welcome, <%= user.username %>!</h1>
-            <p>Manage your RawGains store here.</p>
-        </div>
-        <div class="dashboard-content">
-            <h2>Admin Dashboard</h2>
-            <p>This is the admin panel for managing products, users, and more. Features coming soon!</p>
-        </div>
-    </div>
 
-    <script>
-        // Placeholder for future dashboard functionality
-    </script>
-</body>
-</html>
+                <style>
+                .dashboard-content {
+                    padding: 2rem;
+                }
+
+                .content-header {
+                    margin-bottom: 2rem;
+                }
+
+                .content-header h1 {
+                    font-size: 1.8rem;
+                    font-weight: 600;
+                    color: var(--dark);
+                    margin-bottom: 0.5rem;
+                }
+
+                .content-header p {
+                    color: var(--gray);
+                    font-size: 0.95rem;
+                }
+
+                .blank-state {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    height: 60vh;
+                    text-align: center;
+                    padding: 2rem;
+                }
+
+                .blank-illustration {
+                    margin-bottom: 1.5rem;
+                    opacity: 0.7;
+                }
+
+                .blank-state h2 {
+                    font-size: 1.5rem;
+                    font-weight: 500;
+                    color: var(--dark);
+                    margin-bottom: 0.75rem;
+                }
+
+                .blank-state p {
+                    color: var(--gray);
+                    margin-bottom: 1.5rem;
+                    max-width: 400px;
+                }
+
+                .primary-btn {
+                    background-color: var(--primary);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 0.75rem 1.5rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .primary-btn:hover {
+                    background-color: var(--primary-light);
+                    transform: translateY(-2px);
+                }
+            </style>
+
+
+            <!-- Dashboard Content -->
+            <main class="dashboard-content">
+                <div class="content-header">
+                    <h1>Dashboard Overview</h1>
+                    <p>Welcome back! Here's what's happening with your store today.</p>
+                </div>
+
+                <!-- Blank State -->
+                <div class="blank-state">
+                    <div class="blank-illustration">
+                        <svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="50" y="50" width="200" height="120" rx="10" fill="#F5F5F5" stroke="#E0E0E0" stroke-width="2"/>
+                            <rect x="70" y="80" width="160" height="20" rx="4" fill="#EEEEEE"/>
+                  
+                            <rect x="70" y="110" width="100" height="10" rx="4" fill="#EEEEEE"/>
+                            <rect x="70" y="125" width="80" height="10" rx="4" fill="#EEEEEE"/>
+                            <rect x="70" y="140" width="120" height="10" rx="4" fill="#EEEEEE"/>
+                            <circle cx="240" cy="120" r="20" fill="#FF6B00" fill-opacity="0.1"/>
+                            <path d="M240 110V130M230 120H250" stroke="#FF6B00" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h2>Your Dashboard Awaits</h2>
+                    <p>Start by adding widgets or viewing your store analytics</p>
+                    <button class="primary-btn">
+                        <i class="fas fa-plus"></i> Add Widget
+                    </button>
+                </div>
+            </main>
+
+
+<%- include("../../views/partials/admin/footer") %>

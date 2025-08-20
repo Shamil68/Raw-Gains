@@ -25,6 +25,7 @@ const adminLoginController = async(req,res)=>{
         if(!user.isVerified){
             return res.status(400).json({success:false,message:'User not verified'})
         }
+        
 
         const isMatch = await bcrypt.compare(password,user.password)
         if(!isMatch){
@@ -44,29 +45,100 @@ const adminLoginController = async(req,res)=>{
 }
 
 
-const loadDashboard = async(req,res)=>{
+const loadDashboard = async(req, res) => {
+    const menuItems = [
+        { text: "Dashboard", link: "/dashboard", icon: "icon-home" },
+        { text: "Customers", link: "/customers", icon: "icon-user" },
+        { text: "Products", link: "/products", icon: "icon-box" }
+    ];
+
+    res.render("dashboard", {
+        menuItems,
+        currentPage: "dashboard" // <-- this is used in header.ejs
+    });
+};
+
+
+const customerController = async(req,res)=>{
     try{
-        res.render('dashboard',{user:req.session.admin})
-    }catch(error){
-        return res.status(500).json({success:false,message:'Server error'})
-    }   
+        const page = parseInt(req.query.page) || 1
+        const limit = 4
+        const skip = (page - 1) * limit
+        const query = req.query.search || ''
+    
+
+    const filter = query ? {
+        $or:[
+            {username:{$regex:query,$options:'i'}},
+            {email:{$regex:query,$options:'i'}}
+        ],
+        isAdmin:false
+    }:{isAdmin:false};
+
+    const users = await User.find(filter).sort({createdAt:-1}).skip(skip).limit(limit)
+    const totalUsers = await User.countDocuments(filter)
+    const totalPages = Math.ceil(totalUsers/limit)
+
+    res.render('customers',{
+        admin:req.session.admin,
+        users,
+        currentPage:page,
+        totalPages,
+        search:query,
+        currentPage:'customers'
+    })
+
+}catch(error){
+    return res.status(500).json({success:false,message:'Server error'})
 }
 
-const adminLogout = async(req,res)=>{
-    req.session.destroy(err=>{
-        if(err){
-            return res.redirect('/admin-login')
-        }
-        res.clearCookie('connect.sid')
-        res.redirect('/admin-login')
-    })
 }
+
+const blockCustomer = async(req,res)=>{
+    try{
+        const {id} = req.body
+
+        const user = await User.findById(id)
+        if(!user){
+            return res.status(400).json({success:false,message:'User not found'})
+        }
+        await User.updateOne({_id:id},{$set:{isBlocked:true}})
+        return res.status(200).json({success:true,message:'User has been blocked'})
+    }catch(error){
+        return res.status(500).json({success:false,message:'Server error'})
+    }
+}
+
+const unblockCustomer = async(req,res)=>{
+    try{
+        const {id} = req.body
+
+        const user = await User.findById(id)
+        if(!user){
+            return res.status(400).json({success:false,message:'User not found'})
+        }
+        await User.updateOne({_id:id},{$set:{isBlocked:false}})
+        return res.status(200).json({success:true,message:'User has been unblocked'})
+
+    }catch(error){
+        return res.status(500).json({success:false,message:'Server error'})
+    }
+}
+
     
+const adminLogout = async(req, res) => {
+    delete req.session.admin;
+    res.redirect('/admin/admin-login');
+};
+
 
 
 module.exports ={
     loadAdminLogin,
     adminLoginController,
     loadDashboard,
+    customerController,
+    blockCustomer,
+    unblockCustomer,
     adminLogout
 }

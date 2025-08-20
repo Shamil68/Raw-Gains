@@ -1,0 +1,268 @@
+<%- include("../../views/partials/admin/header") %>
+
+<style>
+    /* Your customer-specific styles here */
+    .dashboard-content {
+        padding: 2rem;
+    }
+
+    .content-header {
+        margin-bottom: 2rem;
+    }
+
+    .content-header h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .content-header p {
+        color: var(--gray);
+        font-size: 0.95rem;
+    }
+
+    /* Add your customer management styles here */
+    .search-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .search-container input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    .search-container button {
+        padding: 10px 20px;
+        background: linear-gradient(to right, var(--primary), var(--primary-light));
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .search-container button:hover {
+        background: linear-gradient(to right, var(--primary-light), var(--primary));
+    }
+
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .user-table th, .user-table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .user-table th {
+        background: linear-gradient(to right, var(--primary), var(--primary-light));
+        color: white;
+    }
+
+    .user-table tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .block-btn, .unblock-btn {
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+        border: none;
+    }
+
+    .block-btn {
+        background-color: #e3342f;
+    }
+
+    .block-btn:hover {
+        background-color: #c53030;
+    }
+
+    .unblock-btn {
+        background-color: #38a169;
+    }
+
+    .unblock-btn:hover {
+        background-color: #2f855a;
+    }
+
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .pagination a {
+        padding: 8px 16px;
+        background: linear-gradient(to right, var(--primary), var(--primary-light));
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+
+    .pagination a:hover {
+        background: linear-gradient(to right, var(--primary-light), var(--primary));
+    }
+
+    .pagination .active {
+        background: linear-gradient(to right, var(--primary-light), var(--primary));
+    }
+</style>
+
+<!-- Dashboard Content -->
+<main class="dashboard-content">
+    <div class="content-header">
+        <h1>Customer Management</h1>
+        <p>Manage your store's customers and their accounts</p>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search by username or email" value="<%= search %>">
+        <button id="search-btn">Search</button>
+        <button id="clear-btn" style="background-color: var(--gray);">Clear</button>
+    </div>
+    
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="user-table-body">
+            <% if (users.length === 0){ %>
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--gray); padding: 20px;">No users found</td>
+                </tr>
+            <% }else{ %>
+                <% users.forEach(user => { %>
+                <tr>
+                    <td><%= user.username %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.phone %></td>
+                    <td>
+                        <% if (user.isBlocked){ %>
+                            <button class="unblock-btn" onclick="unblockUser('<%= user._id %>')">Unblock</button>
+                        <% } else { %>
+                            <button class="block-btn" onclick="blockUser('<%= user._id %>')">Block</button>
+                        <% } %> 
+                    </td>
+                </tr>
+                <% }) %>
+            <% } %>
+        </tbody>
+    </table>
+
+    <% if (totalPages > 1){ %>
+        <div class="pagination">
+            <% for (let i = 1; i <= totalPages; i++){ %>
+                <a href="?page=<%= i %><%= search ? '&search=' + search : '' %>" <%= currentPage === i ? 'class="active"' : '' %>><%= i %></a>
+            <% } %>
+        </div>
+    <% } %>
+</main>
+
+
+<script>
+
+    function blockUser(id){
+        Swal.fire({
+            icon:'warning',
+            title:'Are you sure?',
+            text:'Do you want to Block this user?',
+            showCancelButton:true,
+            confirmButtonText:'Yes, block',
+            confirmButtonColor: '#e3342f',
+            cancelButtonColor: '#38a169'
+        }).then((result)=>{
+            if(result.isConfirmed){
+                fetch('/admin/blockCustomer',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({id})
+
+                })
+                .then(response => response.json())
+                .then(data =>{
+                    if(data.success){
+                        Swal.fire('Blocked!','User has been blocked!','success').then(()=>{
+                        location.reload()
+                        })
+                    }else{
+                        Swal.fire('Error!',data.message,'error')
+                    }
+                })
+                .catch(error =>{
+                    Swal.fire('Error!','Server error','error')
+                })
+            }
+        })
+    }
+
+    function unblockUser(id){
+        Swal.fire({
+            icon:'warning',
+            title:'Are you sure?',
+            text:'Do you want to unblock this user?',
+            showCancelButton:true,
+            confirmButtonText:'Yes, Unblock',
+            confirmButtonColor: '#38a169',
+            cancelButtonColor: '#e3342f'
+
+        }).then((result)=>{
+            if(result.isConfirmed){
+                fetch('/admin/unblockCustomer',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({id})
+                })
+                .then(response =>response.json())
+                .then(data =>{
+                    if(data.success){
+                        Swal.fire('Unblocked!','User has been Unblocked!','success').then(()=>{
+                            location.reload()
+                        })
+                    }else{
+                        Swal.fire('Error!',data.message,'error')
+                    }
+                })
+
+                .catch(error =>{
+                    Swal.fire('Error!','Server error','error')
+                })
+
+
+            }
+        })    
+    }
+
+
+    document.getElementById('search-btn').addEventListener('click',()=>{
+        const query = document.getElementById('search-input').value.trim()
+        window.location.href = `/admin/customers?search=${encodeURIComponent(query)}&page=1`
+    })
+
+    document.getElementById('clear-btn').addEventListener('click',()=>{
+        document.getElementById('search-input').value = ''
+        window.location.href = '/admin/customers?page=1'
+    })
+
+</script>
+
+<%- include("../../views/partials/admin/footer") %>

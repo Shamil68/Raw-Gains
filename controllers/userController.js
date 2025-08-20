@@ -111,6 +111,14 @@ const signupOtpController = async (req, res) => {
         user.isVerified = true;
         await user.save();
 
+        req.session.user ={
+            id:user._id,
+            email:user.email,
+            username:user.username
+        }
+
+        req.session.user ={id:user._id,email:user.email,username:user.username}
+
         console.log(`User verified: ${email}`); // Debug log
         return res.status(200).json({ success: true, message: 'User verified successfully', redirect: '/home'});
     } catch (error) {
@@ -175,8 +183,11 @@ const signupResendOtpController = async (req, res) => {
 
 const loadHomePage = async (req, res) => {
     try {
+        
         const products = await Product.find({ stock: { $gt: 0 } }).limit(6); // Fetch up to 6 in-stock products
-        res.render('home', { user: req.session.user, products });
+        res.render('home', { user: req.session.user,products });
+
+       
     } catch (error) {
         console.error('Load homepage error:', error); // Debug log
         return res.status(500).json({ success: false, message: 'Server error' });
@@ -202,8 +213,16 @@ const loginController = async(req,res)=>{
             return res.status(400).json({success:false,message:'User not exist with this email'})
         }
 
+        if(user.isAdmin || user.role == 'admin'){
+            return res.status(400).json({success:false,message:'admin cant login'})
+        }
+
         if(!user.isVerified){
             return res.status(400).json({success:false,message:'User not verified'})
+        }
+
+        if(user.isBlocked){
+            return res.status(400).json({success:false,message:'User blocked by admin'})
         }
 
         const isMatch = await bcrypt.compare(password,user.password)
@@ -212,7 +231,7 @@ const loginController = async(req,res)=>{
         }
 
         req.session.user = {
-            id:user._id,
+            _id:user._id,
             username:user.username,
             email:user.email
         }
@@ -223,16 +242,7 @@ const loginController = async(req,res)=>{
     }
 }
 
-const logoutController = (req, res) => {
-  req.session.destroy(err => {
-    if (err) {
-      console.log('Logout Error:', err);
-      return res.redirect('/pagenotfound');
-    }
-    res.clearCookie('connect.sid'); // clear cookie on client
-    res.redirect('/login');
-  });
-};
+
 
 const loadForgotPasswordPage = async(req,res)=>{
     try{
@@ -245,6 +255,12 @@ const loadForgotPasswordPage = async(req,res)=>{
 const forgotPasswordController = async(req,res)=>{
     try{
         const {email} = req.body
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+        if(!email || !emailRegex.test(email)){
+            return res.status(400).json({error:'Email is required & Email must be valid'})
+        }
 
         const user = await User.findOne({email:email.toLowerCase()})
 
@@ -380,6 +396,7 @@ const forgotPasswordResendOtpController = async(req,res)=>{
         }
 
         const user = await User.findOne({email:email.toLowerCase()})
+
         if(!user){
             return res.status(400).json({success:false,message:'User not found'})
         }
@@ -388,7 +405,7 @@ const forgotPasswordResendOtpController = async(req,res)=>{
         return res.status(200).json({success:true,message:'OTP resend successfully'})
 
     }catch(error){
-        return res.status(500).json({success:false,message:'Server error'})
+        return res.status(500).json({success:false,message:'Serverr error'})
     }
 }
 
@@ -438,6 +455,14 @@ const resetPasswordController = async (req, res) => {
         return res.status(500).json({ success: false, message: `Server error: ${error.message}` });
     }
 };
+
+const logoutController = async(req,res)=>{
+    delete req.session.user
+    res.redirect('/login')
+}
+
+
+
 
 module.exports = { 
     signupController,

@@ -7,7 +7,8 @@ const connectDB = require('./config/db');
 const path = require('path')
 const adminRoutes = require('./routes/adminRoutes')
 const session = require('express-session')
-const MongoStore = require('connect-mongo')
+const MongoStore = require('connect-mongo');
+const { checkBlockUser } = require('./middlewares/userValidation');
 
 connectDB();
 
@@ -29,6 +30,7 @@ app.use(session({
 
 }))
 
+app.use(checkBlockUser)
 
 app.use((req,res,next)=>{
   res.locals.user = req.session.user || null
