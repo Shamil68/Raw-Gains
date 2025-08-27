@@ -1,4 +1,4 @@
-const User = require('../models/userSchema')
+const User = require('../../models/userSchema')
 const bcrypt = require('bcrypt')
 
 
@@ -49,7 +49,8 @@ const loadDashboard = async(req, res) => {
     const menuItems = [
         { text: "Dashboard", link: "/dashboard", icon: "icon-home" },
         { text: "Customers", link: "/customers", icon: "icon-user" },
-        { text: "Products", link: "/products", icon: "icon-box" }
+        { text: "Products", link: "/products", icon: "icon-box" },
+        
     ];
 
     res.render("dashboard", {

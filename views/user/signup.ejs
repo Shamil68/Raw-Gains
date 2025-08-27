@@ -236,17 +236,24 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
 
             let isValid = true;
-
+            
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const phoneRegex = /^[0-9]{10}$/;
+            const phoneRegex = /^\d{10}$/;
 
             if (!username) {
                 document.getElementById('username-error').textContent = 'Username is required';
                 isValid = false;
-            } else if (username.length < 3) {
-                document.getElementById('username-error').textContent = 'Username must have at least 3 characters';
+            } else if (username.startsWith(' ') || username.endsWith(' ')) {
+                document.getElementById('username-error').textContent = 'Username cant start or end with spaces';
                 isValid = false;
+            } else if (username.length < 3 || username.length > 20){
+                document.getElementById('username-error').textContent ='Username must be include 3 to 20 characters'
+                isValid = false
+            } else if (username.includes('  ')){
+                document.getElementById('username-error').textContent = 'Username cant include multiple spaces together'
+                isValid = false
             }
+
 
             if (!email) {
                 document.getElementById('email-error').textContent = 'Email is required';
@@ -256,6 +263,7 @@
                 isValid = false;
             }
 
+
             if (!phone) {
                 document.getElementById('phone-error').textContent = 'Phone number is required';
                 isValid = false;
@@ -264,13 +272,21 @@
                 isValid = false;
             }
 
+
             if (!password) {
                 document.getElementById('password-error').textContent = 'Password is required';
                 isValid = false;
-            } else if (password.length < 6) {
-                document.getElementById('password-error').textContent = 'Password must have at least 6 characters';
+            } else if (password.length <3 || password.length >20){
+                document.getElementById('password-error').textContent = 'Password must be include 3 to 20 characters'
+                isValid = false
+            } else if (password.startsWith(' ') || password.endsWith(' ')) {
+                document.getElementById('password-error').textContent = 'Password cant start or end with spaces';
                 isValid = false;
+            } else if (password.includes('  ')){
+                document.getElementById('password-error').textContent = 'Password cant include multiple spaces together'
+                isValid = false
             }
+
 
             if (!confirmPassword) {
                 document.getElementById('confirmPassword-error').textContent = 'Confirm Password is required';
@@ -279,6 +295,7 @@
                 document.getElementById('confirmPassword-error').textContent = 'Passwords do not match';
                 isValid = false;
             }
+
 
             if (!isValid) return;
 
