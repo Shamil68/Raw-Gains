@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RawGains Admin | <%= currentPage === 'dashboard' ? 'Dashboard' : currentPage === 'customers' ? 'Customers' : currentPage === 'categories' ? 'Categories' : currentPage === 'products' ? 'Products' : currentPage === 'add-product' ? 'add-Products' : currentPage %></title>
+    <title>RawGains Admin | <%= activePage === 'dashboard' ? 'Dashboard' : activePage === 'customers' ? 'Customers' : activePage === 'categories' ? 'Categories' : activePage === 'products' ? 'Products' : activePage === 'add-product' ? 'add-Products' : activePage === 'edit-product' ? 'Edit-product': '' %></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
     <style>
         :root {
@@ -271,23 +273,23 @@
             </div>
             
             <div class="nav-menu">
-                <a href="/admin/dashboard" class="nav-item <%= currentPage === 'dashboard' ? 'active' : '' %>">
+                <a href="/admin/dashboard" class="nav-item <%= activePage === 'dashboard' ? 'active' : '' %>">
                     <i class="fas fa-chart-pie nav-icon"></i>
                     <span class="nav-text">Dashboard</span>
                 </a>
-                <a href="/admin/customers" class="nav-item <%= currentPage === 'customers' ? 'active' : '' %>">
+                <a href="/admin/customers" class="nav-item <%= activePage === 'customers' ? 'active' : '' %>">
                     <i class="fas fa-users nav-icon"></i>
                     <span class="nav-text">Customers</span>
                 </a>
-                <a href="/admin/categories" class="nav-item <%= currentPage === 'categories' ? 'active' : '' %>">
+                <a href="/admin/categories" class="nav-item <%= activePage === 'categories' ? 'active' : '' %>">
                     <i class="fas fa-tags nav-icon"></i>
                     <span class="nav-text">Categories</span>
                 </a>
-                <a href="/admin/products" class="nav-item <%= currentPage === 'products' ? 'active' : '' %>">
+                <a href="/admin/products" class="nav-item <%= activePage === 'products' ? 'active' : '' %>">
                     <i class="fas fa-box nav-icon"></i>
                     <span class="nav-text">Products</span>
                 </a>
-                <a href="/admin/add-product" class="nav-item <%= currentPage === 'add-product' ? 'active' : '' %>">
+                <a href="/admin/add-product" class="nav-item <%= activePage === 'add-product' ? 'active' : '' %>">
                     <i class="fas fa-plus-circle nav-icon"></i>
                     <span class="nav-text">Add product</span>
                 </a>

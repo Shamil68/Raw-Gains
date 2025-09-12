@@ -165,8 +165,6 @@ const signupResendOtpController = async (req, res) => {
             return res.status(500).json({success:false,message:'Server error'})
         }
 
-
-
         user.otp = otp;
         user.expireOtp = expireOtp;
         await user.save();

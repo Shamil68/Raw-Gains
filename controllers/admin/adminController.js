@@ -55,7 +55,7 @@ const loadDashboard = async(req, res) => {
 
     res.render("dashboard", {
         menuItems,
-        currentPage: "dashboard" // <-- this is used in header.ejs
+        activePage: "dashboard" // <-- this is used in header.ejs
     });
 };
 
@@ -63,7 +63,7 @@ const loadDashboard = async(req, res) => {
 const customerController = async(req,res)=>{
     try{
         const page = parseInt(req.query.page) || 1
-        const limit = 4
+        const limit = 3
         const skip = (page - 1) * limit
         const query = req.query.search || ''
     
@@ -85,8 +85,8 @@ const customerController = async(req,res)=>{
         users,
         currentPage:page,
         totalPages,
-        search:query,
-        currentPage:'customers'
+        searchQuery:query,
+        activePage:'customers'
     })
 
 }catch(error){

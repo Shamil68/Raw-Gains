@@ -39,22 +39,24 @@ const productSchema = new Schema({
         type:[String],
         required:true
     },
-    retings:{
+    ratings:{
         type:Number,
         default:0
     },
-    isBlocked:{
-        type:Boolean,
-        default:false
-    },
+    
+    // isBlocked:{
+    //     type:Boolean,
+    //     default:false
+    // },
+
     isListed:{
         type:Boolean,
         default:true
     },
     status:{
         type:String,
-        enum:['Available','Out of stock','Discontinued'],
-        default:'Available',
+        enum:['Active','Out of stock','Inactive'],
+        default:'Active',
         required:true
     },
      stock: {
