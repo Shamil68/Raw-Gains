@@ -399,6 +399,18 @@
                     <span class="error" id="quantity-error"></span>
                 </div>
 
+                <!-- Category -->
+<div class="form-group">
+    <label for="category">Category *</label>
+    <select name="category" id="category" class="form-control">
+        <option value="" disabled>Select a category</option>
+        <% categories.forEach(cat => { %>
+            <option value="<%= cat._id %>" <%= product.category && product.category.toString() === cat._id.toString() ? 'selected' : '' %>><%= cat.name %></option>
+        <% }) %>
+    </select>
+    <span class="error" id="category-error"></span>
+</div>
+
                 <!-- Product Images -->
                 <div class="form-group full-width">
                     <label>Product Images * (Minimum 3 required)</label>
@@ -407,7 +419,7 @@
                     <div id="image-preview" class="d-flex flex-wrap">
                         <% 
                             let validImages = (product.productImage || []).filter(img => img && img.trim() !== '');
-                            let initialSlotCount = Math.max(4, product.productImage.length || 0); // Use original length, min 3
+                            let initialSlotCount = Math.max(3, product.productImage.length || 0); // Use original length, min 3
                             for (let index = 0; index < initialSlotCount; index++) { 
                         %>
                             <% if (index < product.productImage.length && product.productImage[index] && product.productImage[index].trim() !== '') { %>
@@ -479,7 +491,7 @@
 <script>
 
 
-    document.addEventListener('DOMContentLoaded', (e) => {
+    document.addEventListener('DOMContentLoaded', (e) => {  
         e.preventDefault()
         // DOM elements
         const form = document.getElementById('edit-product-form');
@@ -864,6 +876,11 @@ cropImageBtn.addEventListener('click', () => {
                 isValid = false;
             }
 
+            if (!document.getElementById('category').value) {
+                document.getElementById('category-error').textContent = 'Category is required';
+                isValid = false;
+            }
+
             if (croppedFiles.filter(file => file).length < 3) {
                 document.getElementById('images-error').textContent = 'Minimum 3 images are required';
                 isValid = false;
@@ -877,6 +894,7 @@ cropImageBtn.addEventListener('click', () => {
             formData.append('regularPrice', regularPrice);
             formData.append('salePrice', salePrice);
             formData.append('quantity', quantity);
+            formData.append('category', document.getElementById('category').value);
             formData.append('productImage', JSON.stringify(croppedFiles.filter(file => file && file.isExisting).map(file => file.path)));
             formData.append('initialSlotCount', initialSlotCount);
 
@@ -895,7 +913,7 @@ cropImageBtn.addEventListener('click', () => {
 
             try {
                 const response = await fetch(`/admin/edit-product/${productId}`, {
-                    method: 'POST',
+                    method: 'PATCH',
                     body: formData
                 });
                 const data = await response.json();

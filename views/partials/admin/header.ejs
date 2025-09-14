@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RawGains Admin | <%= activePage === 'dashboard' ? 'Dashboard' : activePage === 'customers' ? 'Customers' : activePage === 'categories' ? 'Categories' : activePage === 'products' ? 'Products' : activePage === 'add-product' ? 'add-Products' : activePage === 'edit-product' ? 'Edit-product': '' %></title>
+    <title>RawGains Admin | <%= activePage === 'dashboard' ? 'Dashboard' : activePage === 'customers' ? 'Customers' : activePage === 'categories' ? 'Categories' : activePage === 'add-category' ? 'add-categories' : activePage === 'products' ? 'Products' : activePage === 'add-product' ? 'add-Products' : activePage === 'edit-product' ? 'Edit-product': '' %></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -285,13 +285,18 @@
                     <i class="fas fa-tags nav-icon"></i>
                     <span class="nav-text">Categories</span>
                 </a>
+                
+                <a href="/admin/add-category" class="nav-item <%= activePage === 'add-category' ? 'active' : '' %>">
+                    <i class="fas fa-plus-circle nav-icon"></i>
+                    <span class="nav-text">Add-category</span>
+                </a>
                 <a href="/admin/products" class="nav-item <%= activePage === 'products' ? 'active' : '' %>">
                     <i class="fas fa-box nav-icon"></i>
                     <span class="nav-text">Products</span>
                 </a>
                 <a href="/admin/add-product" class="nav-item <%= activePage === 'add-product' ? 'active' : '' %>">
                     <i class="fas fa-plus-circle nav-icon"></i>
-                    <span class="nav-text">Add product</span>
+                    <span class="nav-text">Add-product</span>
                 </a>
             </div>
         </nav>

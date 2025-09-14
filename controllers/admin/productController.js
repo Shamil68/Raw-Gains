@@ -1,4 +1,5 @@
 const Product = require('../../models/productSchema')
+const Category = require('../../models/categorySchema');
 const sharp = require('sharp')
 const path = require('path')
 const fs = require('fs')
@@ -6,9 +7,11 @@ const fs = require('fs')
 
 const loadAddProduct = async(req,res)=>{
     try{
+        const categories = await Category.find({ isDeleted: false }).sort({ createdAt: -1 });
         res.render('add-product',{
             admin:req.session.admin,
-            activePage:'add-product'
+            activePage:'add-product',
+            categories
         })
 
     }catch(error){
@@ -21,7 +24,7 @@ const loadAddProduct = async(req,res)=>{
 
 const addProductController = async(req,res)=>{
     try{
-        const {productName,description,regularPrice,salePrice,quantity} = req.body
+        const {productName,description,regularPrice,salePrice,quantity,category} = req.body
         const images = req.files
     
 
@@ -29,6 +32,11 @@ const addProductController = async(req,res)=>{
         return res.status(400).json({success:false,message:'Minimum 3 images required'})
     
     }
+
+    const selectedCategory = await Category.findOne({ _id: category, isDeleted: false });
+        if (!selectedCategory) {
+            return res.status(400).json({ success: false, message: 'Invalid category selected' });
+        }
 
     const uploadDir = path.join(__dirname, "../../public/uploads/resized");
     if (!fs.existsSync(uploadDir)) {
@@ -57,7 +65,8 @@ const addProductController = async(req,res)=>{
         regularPrice:parseFloat(regularPrice),
         salePrice:parseFloat(salePrice),
         quantity:parseInt(quantity),
-        productImage:productImages
+        productImage:productImages,
+        category
 
     })
 
@@ -83,6 +92,8 @@ const productController = async(req,res)=>{
         : {}
 
         const products = await Product.find(query)
+        .populate('category')  // Populate category
+        .sort({createdAt:-1})
         .skip((page-1) * limit)
         .limit(limit)
 
@@ -139,17 +150,20 @@ const unblockProduct = async(req,res)=>{
 
 
 
-const editProductController = async(req,res)=>{
+const loadEditProduct = async(req,res)=>{
     try{
         const product = await Product.findById(req.params.id)
+        const categories = await Category.find({ isDeleted: false }).sort({ createdAt: -1 });  // Fetch all active categories
 
         if(!product){
             return res.status(400).json({success:false,message:'Product not found'})
+
         }
         res.render('edit-product',{
             product,
             admin:req.session.admin,
-            activePage:'edit-product'
+            activePage:'edit-product',
+            categories  // Pass categories to the view
         })
 
     }catch(error){
@@ -161,13 +175,20 @@ const editProductController = async(req,res)=>{
 
 const updateProductController = async (req, res) => {
   try {
-    const { productName, description, regularPrice, salePrice, quantity, productImage, initialSlotCount } = req.body;
+    const { productName, description, regularPrice, salePrice, quantity,category, productImage, initialSlotCount } = req.body;
     const productId = req.params.id;
 
     const product = await Product.findById(productId);
+
     if (!product) {
       return res.status(400).json({ success: false, message: 'Product not found' });
     }
+
+    const selectedCategory = await Category.findOne({ _id: category, isDeleted: false });
+
+    if (!selectedCategory) {
+        return res.status(400).json({ success: false, message: 'Invalid category selected' });
+        }
 
     // Update main fields
     product.productName = productName || product.productName;
@@ -175,6 +196,7 @@ const updateProductController = async (req, res) => {
     product.regularPrice = parseFloat(regularPrice) || product.regularPrice;
     product.salePrice = parseFloat(salePrice) || product.salePrice;
     product.quantity = parseInt(quantity) || product.quantity;
+    product.category = category || product.category;  // Update category
 
     // Parse existing images from hidden input
     let updatedImages = [];
@@ -307,7 +329,7 @@ module.exports={
     blockProduct,
     unblockProduct,
     deleteProductController,
-    editProductController,
+    loadEditProduct,
     updateProductController,
     deleteProductImageController
 }

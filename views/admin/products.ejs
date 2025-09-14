@@ -263,7 +263,7 @@
                 <th>Regular Price</th>
                 <th>Sale Price</th>
                 <th>Quantity</th>
-                <!-- <th>Category</th> -->
+                <th>Category</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -299,6 +299,7 @@
                     <td><%= product.regularPrice.toFixed(2) %></td>
                     <td><%= product.salePrice.toFixed(2) %></td>
                     <td><%= product.quantity %></td>
+                    <td><%= product.category ? product.category.name : 'N/A' %></td>  <!-- Added -->
                     <td><%= product.status || 'Active' %></td>
                     <td>
                         <button class="edit-btn" id="edit-btn" onclick="window.location.href='/admin/edit-product/<%= product._id %>'">Edit</button>
@@ -420,7 +421,7 @@ async function toggleStatus(productId, action){
     if(result.isConfirmed){
         try{
             const res = await fetch(`/admin/${action}-products/${productId}`,{
-                method:'POST',
+                method:'PATCH',
                 headers:{'Content-Type':'application/json'}
             })
             const data = await res.json()

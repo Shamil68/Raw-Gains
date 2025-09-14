@@ -13,11 +13,12 @@ const productSchema = new Schema({
 
     },
     
-    // category:{
-    //     type:mongoose.Schema.Types.ObjectId,
-    //     ref:'Category',
-    //     required:true
-    // },
+    category:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Category',
+        required:true
+    },
+
     // brand:{
     //     type:String,
     //     required:true
@@ -53,18 +54,20 @@ const productSchema = new Schema({
         type:Boolean,
         default:true
     },
+    
     status:{
         type:String,
         enum:['Active','Out of stock','Inactive'],
         default:'Active',
         required:true
     },
-     stock: {
-        type: Number,
-        required: true,
-        min: 0,
-        default: 0
-    }
+
+    //  stock: {
+    //     type: Number,
+    //     required: true,
+    //     min: 0,
+    //     default: 0
+    // }
 
 },{timestamps:true})
 

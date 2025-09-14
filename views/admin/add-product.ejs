@@ -423,6 +423,18 @@
                     <span class="error" id="quantity-error"></span>
                 </div>
 
+                <!-- Category -->
+                <div class="form-group">
+                     <label for="category">Category *</label>
+                     <select name="category" id="category" class="form-control">
+                    <option value="" disabled selected>Select a category</option>
+                 <% categories.forEach(cat => { %>
+                  <option value="<%= cat._id %>"><%= cat.name %></option>
+                 <% }) %>
+                </select>
+                <span class="error" id="category-error"></span>
+               </div>
+
                 <!-- Empty div for spacing -->
                 <div class="form-group"></div>
 
@@ -717,6 +729,7 @@
         const regularPrice = document.getElementById('regularPrice').value;
         const salePrice = document.getElementById('salePrice').value;
         const quantity = document.getElementById('quantity').value;
+        const category = document.getElementById('category').value
         const images = croppedFiles;
         
         let isValid = true;
@@ -770,6 +783,11 @@
             document.getElementById('quantity-error').textContent = 'Quantity must be a number greater than 0';
             isValid = false;
         }
+
+        if (!category) {
+            document.getElementById('category-error').textContent = 'Category is required';
+            isValid = false;
+        }
         
         if (images.length < 3) {
             document.getElementById('images-error').textContent = 'Minimum 3 images are required';
@@ -785,6 +803,7 @@
         formData.append('regularPrice', regularPrice);
         formData.append('salePrice', salePrice);
         formData.append('quantity', quantity);
+        formData.append('category', category);  // Added category
         
         // croppedFiles.forEach((file, index) => {
         //     formData.append(`image${index + 1}`, file);
