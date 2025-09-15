@@ -7,8 +7,12 @@ const connectDB = require('./config/db');
 const path = require('path')
 const adminRoutes = require('./routes/adminRoutes')
 const session = require('express-session')
+// const passport = require('./config/passport')
+const passport = require('passport');
+require('./config/passport');  
 const MongoStore = require('connect-mongo');
 const { checkBlockUser } = require('./middlewares/userValidation');
+const { appendFile } = require('fs/promises');
 
 connectDB();
 
@@ -29,6 +33,10 @@ app.use(session({
   cookie: { secure: false, httpOnly: true, maxAge: 72 * 60 * 60 * 1000 },
 
 }))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 
 app.use(checkBlockUser)
 

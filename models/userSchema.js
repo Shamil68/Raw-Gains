@@ -5,26 +5,36 @@ const {Schema} = mongoose
 const userSchema = new Schema({
     username: {
         type: String,
-        required: true,
+        required: function(){
+            return !this.googleId
+        },
         unique: true,
         trim: true
     },
     email: {
         type: String,
-        required: true,
+        required:true,
         unique: true,
         lowercase: true,
         trim: true
     },
     phone: {
         type: String,
-        required: true,
+        required: function(){
+            return !this.googleId
+        },
         unique: true
     },
     password: {
         type: String,
-        required: true
+        required: function(){
+            return !this.googleId
+        }
     },
+    googleId: {
+         type: String 
+    },
+
     otp: {
         type: String,
         default: null
