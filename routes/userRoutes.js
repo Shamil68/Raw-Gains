@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {signupMiddleware, loginMiddleware, allowOnlyLoggedIn, preventAuthForLoggedUsers, forgotPasswordMiddleware, resetPasswordMiddleware, checkBlockUser} = require('../middlewares/userValidation');
-const { signupController, signupOtpController, signupResendOtpController, loadSignupPage, loadSignupOtpPage, loadHomePage, loadLoginPage, loginController, logoutController, loadForgotPasswordPage, forgotPasswordController, loadResetPasswordPage, resetPasswordController, loadForgotPasswordOtpPage, forgotPasswordOtpController,forgotPasswordResendOtpController } = require('../controllers/user/userController');
+const { signupController, signupOtpController, signupResendOtpController, loadSignupPage, loadSignupOtpPage, loadHomePage, loadLoginPage, loginController, logoutController, loadForgotPasswordPage, forgotPasswordController, loadResetPasswordPage, resetPasswordController, loadForgotPasswordOtpPage, forgotPasswordOtpController,forgotPasswordResendOtpController, loadShopPage, loadProductDetails } = require('../controllers/user/userController');
 
 
 
@@ -22,6 +22,8 @@ router.get('/home',allowOnlyLoggedIn,loadHomePage)
 router.get('/login',preventAuthForLoggedUsers,loadLoginPage)
 router.get('/logout',logoutController);
 router.get('/',allowOnlyLoggedIn,loadHomePage)
+router.get('/shop',allowOnlyLoggedIn,loadShopPage)
+router.get('/product-details/:id',allowOnlyLoggedIn,loadProductDetails)
 router.get('/forgot-password',preventAuthForLoggedUsers,loadForgotPasswordPage)
 router.get('/forgotPassword-otp',preventAuthForLoggedUsers,loadForgotPasswordOtpPage)
 router.get('/reset-password',preventAuthForLoggedUsers,loadResetPasswordPage)

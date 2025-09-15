@@ -1,6 +1,7 @@
 const User = require('../../models/userSchema');
 const bcrypt = require('bcrypt');
 const Product = require('../../models/productSchema')
+const Category = require('../../models/categorySchema')
 const nodemailer = require('nodemailer')
 const dotenv = require('dotenv')
 dotenv.config();
@@ -182,8 +183,13 @@ const signupResendOtpController = async (req, res) => {
 const loadHomePage = async (req, res) => {
     try {
         
-        const products = await Product.find({ stock: { $gt: 0 } }).limit(6); // Fetch up to 6 in-stock products
-        res.render('home', { user: req.session.user,products });
+        const products = await Product.find({ status:'Active'})
+        .populate('category')
+        .sort({createdAt:-1})
+        .limit(6); // Fetch up to 6 in-stock products
+        res.render('home',{
+            products,
+            user: req.session.user });
 
        
     } catch (error) {
@@ -454,6 +460,151 @@ const resetPasswordController = async (req, res) => {
     }
 };
 
+
+
+const loadShopPage = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8; // Products per page
+        const skip = (page - 1) * limit;
+
+        // Build query object
+        let query = {
+            status: 'Active',
+            // isDeleted: false,
+            quantity: { $gt: 0 } // Only show products with stock
+        };
+
+        // Search
+        const searchQuery = req.query.search;
+        if (searchQuery) {
+            query.$or = [
+                { productName: { $regex: searchQuery, $options: 'i' } },
+                { description: { $regex: searchQuery, $options: 'i' } }
+            ];
+        }
+
+        // Category filter
+        const categoryId = req.query.category;
+        if (categoryId) {
+            query.category = categoryId;
+        }
+
+       // Price range filter
+
+       let minPrice = parseFloat(req.query.minPrice);
+        let maxPrice = parseFloat(req.query.maxPrice);
+        if (minPrice !== undefined || maxPrice !== undefined) {
+            minPrice = isNaN(minPrice) ? 0 : minPrice;
+            maxPrice = isNaN(maxPrice) ? Infinity : maxPrice;
+            if (minPrice >= 0 && maxPrice >= 0 && minPrice <= maxPrice) {
+                query.salePrice = { $gte: minPrice, $lte: maxPrice };
+            }
+        } else {
+            minPrice = 0; // Default min price
+            maxPrice = Infinity; // Default max price
+        }
+
+
+        // Sort
+        const sortOption = req.query.sort || 'relevance';
+        let sort = {};
+        switch (sortOption) {
+            case 'price-low':
+                sort.salePrice = 1;
+                break;
+            case 'price-high':
+                sort.salePrice = -1;
+                break;
+            case 'a-z':
+                sort.productName = 1;
+                break;
+            case 'z-a':
+                sort.productName = -1;
+                break;
+            case 'newest':
+                sort.createdAt = -1;
+                break;
+            default:
+                sort.createdAt = -1; // Default to newest
+        }
+
+        // Fetch products with pagination
+        const products = await Product.find(query)
+            .populate('category')
+            .sort(sort)
+            .skip(skip)
+            .limit(limit);
+
+        // Count total products for pagination
+        const totalProducts = await Product.countDocuments(query);
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        // Fetch categories for sidebar
+        const categories = await Category.find({ isBlocked: false });
+
+        res.render('shop', {
+            products,
+            totalProducts,
+            categories,
+            currentPage: page,
+            totalPages,
+            searchQuery,
+            minPrice: minPrice !== Infinity ? minPrice : '', // Send empty string for UI if default
+            maxPrice: maxPrice !== Infinity ? maxPrice : '',
+            sortOption,
+            user: req.session.user
+        });
+    } catch (error) {
+        console.error('Error loading shop page:', error);
+        return res.status(500).json({success:false,message:'Server error'});
+    }
+};
+
+
+const loadProductDetails = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findOne({ _id: productId, status: 'Active' })
+            .populate('category')
+            .lean();
+
+        if (!product || product.quantity <= 0) {
+            return res.redirect('shop');
+        }
+
+        // Calculate average rating
+        const averageRating = product.reviews && product.reviews.length > 0
+            ? (product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length).toFixed(1)
+            : 0;
+
+        // Fetch related products (same category, exclude current product, limit to 4)
+        const relatedProducts = await Product.find({
+            _id: { $ne: productId },
+            category: product.category._id,
+            status: 'Active',
+            isBlocked: false,
+            quantity: { $gt: 0 }
+        })
+            .select('productName productImage salePrice')
+            .limit(4)
+            .lean();
+
+        res.render('product-details', {
+            product,
+            averageRating,
+            products:relatedProducts,
+            user: req.session.user
+        });
+    } catch (error) {
+        console.error('Error loading product details:', error);
+        return res.redirect('/shop'); // Redirect on error or unavailable product
+    }
+};
+
+
+
+
 const logoutController = async(req,res)=>{
     delete req.session.user
     res.redirect('/login')
@@ -469,6 +620,8 @@ module.exports = {
     signupOtpController,
     signupResendOtpController,
     loadHomePage,
+    loadShopPage,
+    loadProductDetails,
     loadLoginPage,
     loginController,
     logoutController,
