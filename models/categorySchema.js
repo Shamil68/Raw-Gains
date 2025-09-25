@@ -20,7 +20,7 @@ const categorySchema = new Schema({
         enum:['Active','Inactive'],
         default:'Active'        
     },
-    isDeleted:{
+    isListed:{
         type:Boolean,
         default:false
     },

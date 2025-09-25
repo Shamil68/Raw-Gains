@@ -101,14 +101,15 @@ const resetPasswordMiddleware = async(req,res,next)=>{
 }
 
 const checkBlockUser = async(req,res,next)=>{
+
     if(req.session.user){
         try{
-            const user = await User.findById(req.session.user.id)
+            const user = await User.findById(req.session.user._id)
             if(user && user.isBlocked){
 
                 delete req.session.user
                 req.session.blockedMessage = 'Your account has been blocked'
-                res.redirect('/login')
+                return res.redirect('/login')
             }
         }catch(error){
             return res.status(500).json({success:false,message:'Server error'})

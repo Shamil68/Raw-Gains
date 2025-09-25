@@ -183,10 +183,18 @@ const signupResendOtpController = async (req, res) => {
 const loadHomePage = async (req, res) => {
     try {
         
-        const products = await Product.find({ status:'Active'})
-        .populate('category')
+        let products = await Product.find({ status:'Active'})
+        .populate({path:'category',select:'name isListed'})
         .sort({createdAt:-1})
-        .limit(6); // Fetch up to 6 in-stock products
+        .limit(4); // Fetch up to 6 in-stock products
+
+         products = products.map(p => {
+            if (!p.category || !p.category.isListed) {
+                return { ...p.toObject(), category: { name: "Uncategorized" } };
+            }
+            return p.toObject();
+        });
+
         res.render('home',{
             products,
             user: req.session.user });
@@ -465,14 +473,14 @@ const resetPasswordController = async (req, res) => {
 const loadShopPage = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 8; // Products per page
+        const limit = 4; // Products per page
         const skip = (page - 1) * limit;
 
         // Build query object
         let query = {
             status: 'Active',
             // isDeleted: false,
-            quantity: { $gt: 0 } // Only show products with stock
+            // quantity: { $gt: 0 } // Only show products with stock
         };
 
         // Search
@@ -530,18 +538,24 @@ const loadShopPage = async (req, res) => {
         }
 
         // Fetch products with pagination
-        const products = await Product.find(query)
-            .populate('category')
+        let products = await Product.find(query)
+            .populate({path:'category',select:'name isListed'})
             .sort(sort)
             .skip(skip)
             .limit(limit);
-
+// after populate, check if category got null (because it's unlisted)
+products = products.map(p => {
+    if (!p.category || !p.category.isListed) {
+        return { ...p.toObject(), category: { name: "Uncategorized" } };
+    }
+    return p;
+});
         // Count total products for pagination
         const totalProducts = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / limit);
 
         // Fetch categories for sidebar
-        const categories = await Category.find({ isBlocked: false });
+        const categories = await Category.find({ isListed: true });
 
         res.render('shop', {
             products,
@@ -550,6 +564,9 @@ const loadShopPage = async (req, res) => {
             currentPage: page,
             totalPages,
             searchQuery,
+
+            category: categoryId || '',   // 👈 add this
+
             minPrice: minPrice !== Infinity ? minPrice : '', // Send empty string for UI if default
             maxPrice: maxPrice !== Infinity ? maxPrice : '',
             sortOption,
@@ -566,11 +583,15 @@ const loadProductDetails = async (req, res) => {
     try {
         const productId = req.params.id;
         const product = await Product.findOne({ _id: productId, status: 'Active' })
-            .populate('category')
+            .populate({path:'category',match:{isListed:true},select:'name'})
             .lean();
 
         if (!product || product.quantity <= 0) {
             return res.redirect('shop');
+        }
+
+        if (!product.category) {
+            product.category = { name: "Uncategorized" };
         }
 
         // Calculate average rating
@@ -579,17 +600,20 @@ const loadProductDetails = async (req, res) => {
             : 0;
 
         // Fetch related products (same category, exclude current product, limit to 4)
-        const relatedProducts = await Product.find({
+        let relatedProducts = []
+        if (product.category && product.category.name !== "Uncategorized") {
+
+         relatedProducts = await Product.find({
             _id: { $ne: productId },
             category: product.category._id,
             status: 'Active',
-            isBlocked: false,
+            // isBlocked: false,
             quantity: { $gt: 0 }
         })
             .select('productName productImage salePrice')
             .limit(4)
             .lean();
-
+    }
         res.render('product-details', {
             product,
             averageRating,

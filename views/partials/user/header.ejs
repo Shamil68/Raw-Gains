@@ -5,8 +5,8 @@
  <!-- ffd700 -->
 <style>
     :root {
-        --primary-gradient: linear-gradient(135deg, #ff3d3d 0%, #ffd700 170%);
-        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --primary-gradient: linear-gradient(135deg, #ff3d3d 100%, #ffd700 0%);
+        --secondary-gradient: linear-gradient(135deg, #eef524f6 100%, #ff3d3d 0%);
         --glass-bg: rgba(222, 12, 12, 0.1);
         --glass-border: rgba(255, 255, 255, 0.2);
         --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.1);
@@ -32,14 +32,15 @@
     }
 
     .logo {
+
         font-size: 2rem;
         font-weight: 900;
         color: white;
         text-decoration: none;
-        background: linear-gradient(135deg, #fff, #a0aec0);
+        background: linear-gradient(135deg, #fff, #fbfcfd);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        /* text-shadow: 0 0 10px rgba(244, 241, 241, 0.961); */
     }
 
     .menu-toggle {
@@ -208,7 +209,7 @@
 
 <nav class="navbar">
     <div class="nav-container">
-        <a href="/" class="logo">Raw<span style="background: var(--secondary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Gains</span></a>
+        <a href="/" class="logo">Raw<span style=" -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-color: #ff3d;">Gains</span></a>
         <div class="menu-toggle" id="menu-toggle">
             <i class="fas fa-bars"></i>
         </div>

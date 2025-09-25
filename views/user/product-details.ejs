@@ -1,4 +1,4 @@
-<!-- <%- include('../partials/user/header') %> -->
+<%- include('../partials/user/header') %>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -397,7 +397,7 @@
         background: rgba(255, 255, 255, 0.05);
         padding: 1rem 1.5rem;
         border-radius: var(--border-radius);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(246, 241, 241, 0.959);
         transition: var(--transition);
     }
 
@@ -429,7 +429,7 @@
         padding: 1.5rem;
         background: rgba(255, 255, 255, 0.03);
         border-radius: var(--border-radius);
-        border-left: 4px solid var(--primary);
+        border: 1px solid var(--primary);
     }
 
     .quantity-selector {
@@ -976,13 +976,13 @@
                     <% } %>
                 </div>
                 <div class="product-meta">
-                    <div class="meta-item">
+                    <!-- <div class="meta-item">
                         <span class="meta-label">Brand</span>
                         <span class="meta-value"><%= product.brand || 'Unknown' %></span>
-                    </div>
+                    </div> -->
                     <div class="meta-item">
                         <span class="meta-label">Category</span>
-                        <span class="meta-value"><%= product.categoryName || 'Uncategorized' %></span>
+                        <p class="product-category" style="color: white;"><%= product.category ? product.category.name : 'Uncategorized' %></p>
                     </div>
                     <div class="meta-item">
                         <span class="meta-label">Stock</span>
@@ -1000,8 +1000,8 @@
                 </div>
                 <div class="action-buttons">
                     <a href="/add-to-cart/<%= product._id %>" class="btn-primary">Add to Cart</a>
-                    <a href="#" class="icon-btn"><i class="fas fa-heart"></i></a>
-                    <a href="#" class="icon-btn"><i class="fas fa-share-alt"></i></a>
+                    <!-- <a href="#" class="icon-btn"><i class="fas fa-heart"></i></a>
+                    <a href="#" class="icon-btn"><i class="fas fa-share-alt"></i></a> -->
                 </div>
             </div>
         </div>
@@ -1100,7 +1100,7 @@
             <% if (products && products.length > 0) { %>
                 <% products.forEach(related => { %>
                     <div class="related-product-card">
-                        <img src="/<%= related.productImage[0] %>" alt="<%= related.productName %>">
+                        <img src="<%= related.productImage[0] %>" alt="<%= related.productName %>">
                         <h4><%= related.productName %></h4>
                         <span class="price">₹<%= related.salePrice.toFixed(2) %></span>
                     </div>

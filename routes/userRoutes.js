@@ -34,16 +34,25 @@ router.get('/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Google callback route
-router.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-
-    req.session.user = req.user;
-
-    res.redirect('/');    // Successful login
-
-  });
-
+router.get('/auth/google/callback', (req, res, next) => {
+  passport.authenticate('google', (err, user, info) => {
+    if (err) {
+      console.error("Google Auth Error:", err);
+      return res.status(500).send("Server error: " + err.message);
+    }
+    if (!user) {
+      return res.redirect('/login');
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        console.error("Login Error:", err);
+        return res.status(500).send("Login error: " + err.message);
+      }
+      req.session.user = user;
+      return res.redirect('http://localhost:3000'); // Successful login
+    });
+  })(req, res, next);
+});
 
 module.exports = router;
 

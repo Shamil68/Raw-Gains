@@ -33,7 +33,6 @@ const adminLoginController = async(req,res)=>{
         if(!isMatch){
             return res.status(400).json({success:false,message:'Invalid Password'})
         }
-
         req.session.admin ={
             id:user._id,
             username:user.username,

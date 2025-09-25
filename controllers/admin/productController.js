@@ -7,8 +7,8 @@ const fs = require('fs')
 
 const loadAddProduct = async(req,res)=>{
     try{
-        const categories = await Category.find({ isDeleted: false }).sort({ createdAt: -1 });
-        res.render('add-product',{
+        const categories = await Category.find({ isListed: false }).sort({ createdAt: -1 });
+        res.render('products',{
             admin:req.session.admin,
             activePage:'add-product',
             categories
@@ -92,21 +92,31 @@ const productController = async(req,res)=>{
         : {}
 
         const products = await Product.find(query)
-        .populate('category')  // Populate category
+        .populate({path:'category',select:'name isListed'})  // Populate category
         .sort({createdAt:-1})
         .skip((page-1) * limit)
         .limit(limit)
 
+        const updatedProducts = products.map(p => {
+    if (!p.category || !p.category.isListed) {
+        return { ...p.toObject(), category: { name: "Uncategorized" } };
+    }
+    return p;
+});
+
+
         const totalProducts = await Product.countDocuments(query)
         const totalPages = Math.ceil(totalProducts/limit)
+        const categories = await Category.find({ isDeleted: false }).sort({ createdAt: -1 });
 
         res.render('products',{
-            products,
+            products:updatedProducts,
             currentPage:page,
             totalPages,
             searchQuery:req.query.search || '' ,
             limit,
-            activePage:'products'
+            activePage:'products',
+            categories
         })
 
     }catch(error){
@@ -195,7 +205,7 @@ const updateProductController = async (req, res) => {
     product.description = description || product.description;
     product.regularPrice = parseFloat(regularPrice) || product.regularPrice;
     product.salePrice = parseFloat(salePrice) || product.salePrice;
-    product.quantity = parseInt(quantity) || product.quantity;
+    product.quantity = parseInt(quantity) ?? product.quantity;
     product.category = category || product.category;  // Update category
 
     // Parse existing images from hidden input

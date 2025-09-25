@@ -871,8 +871,8 @@ cropImageBtn.addEventListener('click', () => {
             if (!quantity) {
                 document.getElementById('quantity-error').textContent = 'Quantity is required';
                 isValid = false;
-            } else if (isNaN(quantity) || quantity <= 0) {
-                document.getElementById('quantity-error').textContent = 'Quantity must be a number greater than 0';
+            } else if (isNaN(quantity) || quantity < 0) {
+                document.getElementById('quantity-error').textContent = 'Quantity must be a number & greater than or equal to   0';
                 isValid = false;
             }
 

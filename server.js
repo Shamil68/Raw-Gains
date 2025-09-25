@@ -27,12 +27,13 @@ app.use('/uploads',express.static(path.join(__dirname, 'public/uploads')));
 app.use(session({
   secret:process.env.SESSION_SECRET,
   resave:false,
-  // secure:false,
+  secure:false,
   saveUninitialized:false,
   store:MongoStore.create({mongoUrl:process.env.MONGO_URI}),
   cookie: { secure: false, httpOnly: true, maxAge: 72 * 60 * 60 * 1000 },
 
 }))
+
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -58,6 +59,7 @@ app.use((req, res, next) => {
 
 app.use('/', userRoutes);
 app.use('/admin', adminRoutes)
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

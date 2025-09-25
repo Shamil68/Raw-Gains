@@ -197,6 +197,8 @@
 </div>
 </main>
 
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
@@ -214,7 +216,7 @@
         }).then((result)=>{
             if(result.isConfirmed){
                 fetch('/admin/blockCustomer',{
-                    method:'PATCH',
+                    method:'POST',
                     headers:{'Content-Type':'application/json'},
                     body:JSON.stringify({id})
 
@@ -249,7 +251,7 @@
         }).then((result)=>{
             if(result.isConfirmed){
                 fetch('/admin/unblockCustomer',{
-                    method:'PATCH',
+                    method:'POST',
                     headers:{'Content-Type':'application/json'},
                     body:JSON.stringify({id})
                 })

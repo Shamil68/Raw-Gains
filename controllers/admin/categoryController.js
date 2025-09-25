@@ -4,7 +4,7 @@ const Category = require('../../models/categorySchema')
 
 const loadAddCategory = async (req, res) => {
     try {
-        res.render('add-category', {
+        res.render('categories', {
             admin: req.session.admin,
             activePage: 'add-category'
         })
@@ -47,7 +47,7 @@ const categoryController = async(req,res)=>{
         const skip = (page-1)*limit
 
         const query = {
-            isDeleted: false,
+            // isDeleted: false,
             name:{$regex:searchQuery,$options:'i'}
         }
 
@@ -82,15 +82,17 @@ const deleteCategoryController = async(req,res)=>{
         if(!category){
             return res.status(400).json({sucess:false,message:'Category not found'})
         }
+    
+        // if(!category.isListed){
+        //     return res.status(400).json({success:false,message:'Category is already Unlisted'})
+        // }
 
-        if(category.isDeleted){
-            return res.status(400).json({success:false,message:'Category is already deleted'})
-        }
-
-        category.isDeleted = true
+        category.isListed = !category.isListed
         await category.save()
 
-        return res.status(200).json({success:true,message:'Category deleted successfully'})
+        const status = category.isListed ? "List" : "Unlist"
+
+        return res.status(200).json({success:true,message:`Category ${status} successfully`})
 
     }catch(error){
         console.error('Error deleting category:', error);
@@ -104,7 +106,7 @@ const loadEditCategory = async(req,res)=>{
 
         const category = await Category.findById(id)
 
-        if(!category || category.isDeleted){
+        if(!category || !category.isListed){
             return res.status(400).json({success:false,message:'Category not found'})
         }
 

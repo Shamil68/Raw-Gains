@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RawGains Admin | <%= activePage === 'dashboard' ? 'Dashboard' : activePage === 'customers' ? 'Customers' : activePage === 'categories' ? 'Categories' : activePage === 'add-category' ? 'add-categories' : activePage === 'products' ? 'Products' : activePage === 'add-product' ? 'add-Products' : activePage === 'edit-product' ? 'Edit-product': '' %></title>
+    <title>RawGains Admin | <%= activePage === 'dashboard' ? 'Dashboard' : activePage === 'customers' ? 'Customers' : activePage === 'categories' ? 'Categories' : activePage === 'products' ? 'Products' : activePage === 'edit-product' ? 'Edit-product': '' %></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -269,7 +269,7 @@
         <!-- Vertical Navigation -->
         <nav class="vertical-nav">
             <div class="nav-logo">
-                <img src="/img/shopping-cart/rawgains-logo.jpg" alt="RawGains">
+                <img src="/uploads/Rawgains-logo.jpg" alt="RawGains">
             </div>
             
             <div class="nav-menu">
@@ -286,18 +286,18 @@
                     <span class="nav-text">Categories</span>
                 </a>
                 
-                <a href="/admin/add-category" class="nav-item <%= activePage === 'add-category' ? 'active' : '' %>">
+                <!-- <a href="/admin/add-category" class="nav-item <%= activePage === 'add-category' ? 'active' : '' %>">
                     <i class="fas fa-plus-circle nav-icon"></i>
                     <span class="nav-text">Add-category</span>
-                </a>
+                </a> -->
                 <a href="/admin/products" class="nav-item <%= activePage === 'products' ? 'active' : '' %>">
                     <i class="fas fa-box nav-icon"></i>
                     <span class="nav-text">Products</span>
                 </a>
-                <a href="/admin/add-product" class="nav-item <%= activePage === 'add-product' ? 'active' : '' %>">
+                <!-- <a href="/admin/add-product" class="nav-item <%= activePage === 'add-product' ? 'active' : '' %>">
                     <i class="fas fa-plus-circle nav-icon"></i>
                     <span class="nav-text">Add-product</span>
-                </a>
+                </a> -->
             </div>
         </nav>
 
@@ -318,7 +318,7 @@
                     </div>
                     
                     <div class="user-profile" id="userDropdown">
-                        <img src="/img/shopping-cart/rawgains-logo.jpg" alt="Admin" class="user-avatar">
+                        <img src="/uploads/Rawgains-logo.jpg" alt="Admin" class="user-avatar">
                         <span class="user-name">Admin</span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
