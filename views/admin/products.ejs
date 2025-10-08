@@ -628,8 +628,8 @@
                         <label for="category">Category *</label>
                         <select name="category" id="category" class="form-control">
                             <option value="" disabled selected>Select a category</option>
-                            <% categories.forEach(cat => { %>
-                                <option value="<%= cat._id %>"><%= cat.name %></option>
+                            <% categories.forEach(category => { %>
+                                <option value="<%= category._id %>"><%= category.name %></option>
                             <% }) %>
                         </select>
                         <span class="error" id="category-error"></span>

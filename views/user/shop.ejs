@@ -312,6 +312,7 @@
 
     .category-item {
         margin-bottom: 0.5rem;
+
     }
 
     .category-link {
@@ -322,7 +323,7 @@
         color: var(--gray-300);
         text-decoration: none;
         border-radius: var(--border-radius);
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(226, 38, 38, 0.05);
         border: 1px solid rgba(236, 230, 230, 0.95);
         transition: var(--transition);
         font-weight: 500;
@@ -333,6 +334,11 @@
         color: var(--dark);
         transform: translateX(5px);
         box-shadow: var(--shadow-neon);
+    }
+
+    .category-link.active{
+        background-color: #ffffff;
+
     }
 
     .filter-group {
@@ -435,7 +441,7 @@
         padding: 0.875rem 1.25rem;
         font-size: 0.95rem;
         border: 2px solid rgba(15, 15, 15, 0.934);
-        background: rgba(158, 159, 154, 0.982);
+        background: rgba(242, 243, 240, 0.982);
         color: var(--white);
         border-radius: var(--border-radius);    
         cursor: pointer;
@@ -758,7 +764,7 @@
                     </li>
                     <% categories.forEach(cat => { %>
                         <li class="category-item">
-                            <a href="/shop?category=<%= encodeURIComponent(cat._id) %>" class="category-link <%= (category === cat._id.toString()) ? 'bg-secondary text-dark' : '' %>">
+                        <a href="/shop?category=<%= encodeURIComponent(cat._id) %>" class="category-link <%= (category === cat._id.toString()) ? 'active' : '' %>">
                                 <span><%= cat.name %></span>
                                 <span class="category-count"></span>
                             </a>
@@ -783,7 +789,7 @@
         <main class="shop-products fade-in">
             <div class="shop-controls">
                 <div class="products-found" id="productsFound">
-                    Showing <%= (currentPage - 1) * 8 + 1 %>-<%= Math.min(currentPage * 8, totalProducts) %> of <%= totalProducts %> products
+                    Showing <%= (currentPage - 1) * limit + 1 %>-<%= Math.min(currentPage * limit, totalProducts) %> of <%= totalProducts %> products
                 </div>
                 <div class="shop-actions">
                     <select class="sort-select" id="sortSelect" value="<%= sortOption %>">
@@ -942,6 +948,7 @@
         });
 
         // Clear search
+
         clearSearchBtn.addEventListener('click', () => {
             searchInput.value = '';
             const url = new URL('/shop', window.location.origin);

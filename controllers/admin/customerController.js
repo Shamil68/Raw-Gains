@@ -1,5 +1,6 @@
 const User = require('../../models/userSchema')
 const bcrypt = require('bcrypt')
+const statusCodes = require('../../utils/statusCodes')
 
 
 const customerController = async(req,res)=>{
@@ -32,7 +33,7 @@ const customerController = async(req,res)=>{
     })
 
 }catch(error){
-    return res.status(500).json({success:false,message:'Server error'})
+    return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
 }
 
 }
@@ -45,12 +46,12 @@ const blockCustomer = async(req,res)=>{
 
         const user = await User.findById(id)
         if(!user){
-            return res.status(400).json({success:false,message:'User not found'})
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'User not found'})
         }
         await User.updateOne({_id:id},{$set:{isBlocked:true}})
-        return res.status(200).json({success:true,message:'User has been blocked'})
+        return res.status(statusCodes.OK).json({success:true,message:'User has been blocked'})
     }catch(error){
-        return res.status(500).json({success:false,message:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
 
@@ -62,13 +63,13 @@ const unblockCustomer = async(req,res)=>{
 
         const user = await User.findById(id)
         if(!user){
-            return res.status(400).json({success:false,message:'User not found'})
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'User not found'})
         }
         await User.updateOne({_id:id},{$set:{isBlocked:false}})
-        return res.status(200).json({success:true,message:'User has been unblocked'})
+        return res.status(statusCodes.OK).json({success:true,message:'User has been unblocked'})
 
     }catch(error){
-        return res.status(500).json({success:false,message:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
 

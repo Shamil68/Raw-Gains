@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/userSchema');
+const statusCodes = require('../utils/statusCodes');
 
 const signupMiddleware = async (req, res, next) => {
     try {
@@ -11,23 +12,23 @@ const signupMiddleware = async (req, res, next) => {
         const phoneRegex = /^[0-9]{10}$/;
 
         if (!username || username.length < 3) {
-            return res.status(400).json({ error: 'Username required & must be at least 3 characters' });
+            return res.status(statusCodes.BAD_REQUEST).json({ error: 'Username required & must be at least 3 characters' });
         }
 
         if (!email || !emailRegex.test(email)) {
-            return res.status(400).json({ error: 'Email must be valid' });
+            return res.status(statusCodes.BAD_REQUEST).json({ error: 'Email must be valid' });
         }
 
         if (!phone || !phoneRegex.test(phone)) {
-            return res.status(400).json({ error: 'Phone is required & must be valid' });
+            return res.status(statusCodes.BAD_REQUEST).json({ error: 'Phone is required & must be valid' });
         }
 
         if (!password || password.length < 6) {
-            return res.status(400).json({ error: 'Password required & must be at least 6 characters' });
+            return res.status(statusCodes.BAD_REQUEST).json({ error: 'Password required & must be at least 6 characters' });
         }
 
         if (password !== confirmPassword) {
-            return res.status(400).json({ error: 'Passwords do not match' });
+            return res.status(statusCodes.BAD_REQUEST).json({ error: 'Passwords do not match' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -37,7 +38,7 @@ const signupMiddleware = async (req, res, next) => {
         next();
     } catch (error) {
         // console.error('Signup middleware error:', error); // Debug log
-        return res.status(500).json({ error: 'Server error' });
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Server error' });
     }
 };
 
@@ -48,17 +49,17 @@ const loginMiddleware = async(req,res,next)=>{
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if(!email || !emailRegex.test(email)){
-            return res.status(400).json({error:'Email is required & Email must be valid'})
+            return res.status(statusCodes.BAD_REQUEST).json({error:'Email is required & Email must be valid'})
 
         }
 
         if(!password){
-            return res.status(400).json({error:'Password is required'})
+            return res.status(statusCodes.BAD_REQUEST).json({error:'Password is required'})
         }
         next()
 
     }catch(error){
-        return res.status(500).json({error:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({error:'Server error'})
     }
 
 }
@@ -70,12 +71,12 @@ const forgotPasswordMiddleware = async(req,res,next)=>{
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if(!email || !emailRegex.test(email)){
-            return res.status(400).json({error:'Email required & it must be valid'})
+            return res.status(statusCodes.BAD_REQUEST).json({error:'Email required & it must be valid'})
         }
         next()
 
     }catch(error){
-        return res.status(500).json({error:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({error:'Server error'})
     }
 }
 
@@ -84,10 +85,10 @@ const resetPasswordMiddleware = async(req,res,next)=>{
         const {password,confirmPassword} = req.body
 
         if(!password || password.length <6){
-            return res.status(400).json({error:'Password is required & must be at least 6 characters'})
+            return res.status(statusCodes.BAD_REQUEST).json({error:'Password is required & must be at least 6 characters'})
         }
         if(password !== confirmPassword){
-            return res.status(400).json({error:'Passwords do not match'})
+            return res.status(statusCodes.BAD_REQUEST).json({error:'Passwords do not match'})
         }
 
         const hashedPasssword = await bcrypt.hash(password,10)
@@ -96,7 +97,7 @@ const resetPasswordMiddleware = async(req,res,next)=>{
         next()
 
     }catch(error){
-        return res.status(500).json({error:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({error:'Server error'})
     }
 }
 
@@ -112,7 +113,7 @@ const checkBlockUser = async(req,res,next)=>{
                 return res.redirect('/login')
             }
         }catch(error){
-            return res.status(500).json({success:false,message:'Server error'})
+            return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
         }
     }
     next()

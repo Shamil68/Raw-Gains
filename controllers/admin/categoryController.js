@@ -1,4 +1,5 @@
 const Category = require('../../models/categorySchema')
+const statusCodes = require('../../utils/statusCodes')
 
 
 
@@ -6,10 +7,10 @@ const loadAddCategory = async (req, res) => {
     try {
         res.render('categories', {
             admin: req.session.admin,
-            activePage: 'add-category'
+            activePage: 'categories'
         })
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Server error' })
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Server error' })
     }
 }
 
@@ -17,9 +18,9 @@ const addCategoryController = async (req, res) => {
     try {
         const { categoryName, description } = req.body
 
-        const existingCategory = await Category.findOne({name:categoryName,isDeleted:false})
+        const existingCategory = await Category.findOne({name:categoryName})
         if(existingCategory){
-            return res.status(400).json({success:false,message:'Category name already exist'})
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Category name already exist'})
         }
 
         const newCategory = new Category({
@@ -28,12 +29,12 @@ const addCategoryController = async (req, res) => {
         })
 
         await newCategory.save()
-        return res.status(200).json({success:true,message:'Category added successfully', redirect:'/admin/categories'})
+        return res.status(statusCodes.OK).json({success:true,message:'Category added successfully', redirect:'/admin/categories'})
 
 
     }catch(error){
-        console.log('eror',error)
-        return res.status(500).json({success:false,message:'Server error'})
+        console.log('error',error)
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
 
@@ -68,7 +69,7 @@ const categoryController = async(req,res)=>{
             activePage:'categories'
         })
     }catch(error){
-        return res.status(500).json({success:false,message:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
 
@@ -80,7 +81,7 @@ const deleteCategoryController = async(req,res)=>{
 
         const category = await Category.findById(id)
         if(!category){
-            return res.status(400).json({sucess:false,message:'Category not found'})
+            return res.status(statusCodes.BAD_REQUEST).json({sucess:false,message:'Category not found'})
         }
     
         // if(!category.isListed){
@@ -92,11 +93,11 @@ const deleteCategoryController = async(req,res)=>{
 
         const status = category.isListed ? "List" : "Unlist"
 
-        return res.status(200).json({success:true,message:`Category ${status} successfully`})
+        return res.status(statusCodes.OK).json({success:true,message:`Category ${status} successfully`})
 
     }catch(error){
         console.error('Error deleting category:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(statusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Server error' });
     }
 }
 
@@ -107,7 +108,7 @@ const loadEditCategory = async(req,res)=>{
         const category = await Category.findById(id)
 
         if(!category || !category.isListed){
-            return res.status(400).json({success:false,message:'Category not found'})
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Category not found'})
         }
 
         res.render('edit-category',{
@@ -117,9 +118,11 @@ const loadEditCategory = async(req,res)=>{
         })
 
     }catch(error){
-        return res.status(500).json({success:false,message:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
+
+
 
 const updateCategoryController = async(req,res)=>{
     try{
@@ -127,14 +130,14 @@ const updateCategoryController = async(req,res)=>{
         const {categoryName,description} = req.body
 
         const category = await Category.findById(id)
-        if(!category || category.isDeleted){
-            return res.status(400).json({success:false,message:'Category not found'})
+        if(!category){
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Category not found'})
         }
 
-        const existingCategory = await Category.findOne({name:categoryName,isDeleted:false,_id:{$ne:id}})
+        const existingCategory = await Category.findOne({name:categoryName,_id:{$ne:id}})
 
         if(existingCategory){
-            return res.status(400).json({success:false,message:'Category already exist'})
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Category already exist'})
         }
 
         category.name = categoryName,
@@ -142,10 +145,10 @@ const updateCategoryController = async(req,res)=>{
 
         await category.save()
 
-        return res.status(200).json({success:true,message:'Category updated successfully',redirect:'/admin/categories'})
+        return res.status(statusCodes.OK).json({success:true,message:'Category updated successfully',redirect:'/admin/categories'})
 
     }catch(error){
-        return res.status(500).json({success:false,message:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
 

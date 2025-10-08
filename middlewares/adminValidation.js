@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
-const User = require('../models/userSchema')
+const User = require('../models/userSchema');
+const statusCodes = require('../utils/statusCodes');
 
 
 const adminLoginMiddleware = async(req,res,next)=>{
@@ -9,17 +10,17 @@ const adminLoginMiddleware = async(req,res,next)=>{
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if(!email || !emailRegex.test(email)){
-            return res.status(400).json({message:'Email required & it must be valid'})
+            return res.status(statusCodes.BAD_REQUEST).json({message:'Email required & it must be valid'})
 
         }
         if(!password){
-            return res.status(400).json({message:'password required'})
+            return res.status(statusCodes.BAD_REQUEST).json({message:'password required'})
         }
 
         next()
 
     }catch(error){
-        return res.status(500).json({message:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({message:'Server error'})
     }
 }
 
@@ -43,8 +44,10 @@ const preventAuthForLoggedUsers = (req,res,next)=>{
 
 
 
+
 module.exports ={
     adminLoginMiddleware,
     allowOnlyLoggedInAdmin,
-    preventAuthForLoggedUsers
+    preventAuthForLoggedUsers,
+    
 }

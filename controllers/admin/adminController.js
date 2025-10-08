@@ -1,12 +1,13 @@
 const User = require('../../models/userSchema')
 const bcrypt = require('bcrypt')
+const StatusCodes = require('../../utils/statusCodes');
 
 
 const loadAdminLogin = async(req,res)=>{
-    try{
-        res.render('admin-login',{user:req.session.admin || null})
+    try{    
+        res.status(StatusCodes.OK).render('admin-login',{user:req.session.admin || null})
     }catch(error){
-        return res.status(500).json({success:false,message:'Server error'})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
 
@@ -19,19 +20,19 @@ const adminLoginController = async(req,res)=>{
         const user = await User.findOne({email:email.toLowerCase()})
 
         if(!user){
-            return res.status(400).json({success:false,message:'User not found'})
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'User not found'})
         }
         if(!user.isAdmin){
-            return res.status(400).json({success:false,message:'Not an admin account'})
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Not an admin account'})
         }      
         if(!user.isVerified){
-            return res.status(400).json({success:false,message:'User not verified'})
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'User not verified'})
         }
         
 
         const isMatch = await bcrypt.compare(password,user.password)
         if(!isMatch){
-            return res.status(400).json({success:false,message:'Invalid Password'})
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Invalid Password'})
         }
         req.session.admin ={
             id:user._id,
@@ -39,9 +40,9 @@ const adminLoginController = async(req,res)=>{
             email:user.email
         }
 
-        return res.status(200).json({success:true,message:'Admin login successfull', redirect:'/admin/dashboard'})
+        return res.status(statusCodes.OK).json({success:true,message:'Admin login successfull', redirect:'/admin/dashboard'})
     }catch(error){
-        return res.status(500).json({success:false,message:'Server error'})
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
 

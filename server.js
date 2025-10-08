@@ -12,7 +12,7 @@ const passport = require('passport');
 require('./config/passport');  
 const MongoStore = require('connect-mongo');
 const { checkBlockUser } = require('./middlewares/userValidation');
-const { appendFile } = require('fs/promises');
+const { appendFile } = require('fs/promises'); //To log server events (like user login, errors, requests)
 
 connectDB();
 
@@ -20,28 +20,31 @@ app.set('view engine', 'ejs');
 app.set('views',[path.join(__dirname,'views/user'),path.join(__dirname,'views/admin')])
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); // helps exp to read form data includes nested obj
 app.use('/uploads',express.static(path.join(__dirname, 'public/uploads')));
 
 
 app.use(session({
   secret:process.env.SESSION_SECRET,
-  resave:false,
+  resave:false,  // don’t save session if not modified
   secure:false,
-  saveUninitialized:false,
-  store:MongoStore.create({mongoUrl:process.env.MONGO_URI}),
+  saveUninitialized:false,  // don’t create session until something is stored
+  store:MongoStore.create({mongoUrl:process.env.MONGO_URI}), // tells express to store in db
   cookie: { secure: false, httpOnly: true, maxAge: 72 * 60 * 60 * 1000 },
 
 }))
 
 
 app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.session()) // Enable session support for persistent login sessions
 
 
 app.use(checkBlockUser)
 
+// Middleware to make user/admin data available in all EJS templates
 app.use((req,res,next)=>{
+
+  // If user or admin exists in session, store in res.locals (for EJS access)
   res.locals.user = req.session.user || null
   res.locals.admin = req.session.admin || null;
 
@@ -57,7 +60,7 @@ app.use((req, res, next) => {
 });
 
 
-app.use('/', userRoutes);
+app.use('/',userRoutes);
 app.use('/admin', adminRoutes)
 
 
