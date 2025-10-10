@@ -55,7 +55,7 @@ const signupController = async (req, res) => {
         }catch(error){
             return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
         }
-
+        
 
 
         const newUser = new User({

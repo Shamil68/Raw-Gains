@@ -20,19 +20,19 @@ const adminLoginController = async(req,res)=>{
         const user = await User.findOne({email:email.toLowerCase()})
 
         if(!user){
-            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'User not found'})
+            return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:'User not found'})
         }
         if(!user.isAdmin){
-            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Not an admin account'})
+            return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:'Not an admin account'})
         }      
         if(!user.isVerified){
-            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'User not verified'})
+            return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:'User not verified'})
         }
         
 
         const isMatch = await bcrypt.compare(password,user.password)
         if(!isMatch){
-            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Invalid Password'})
+            return res.status(StatusCodes.BAD_REQUEST).json({success:false,message:'Invalid Password'})
         }
         req.session.admin ={
             id:user._id,
@@ -40,9 +40,9 @@ const adminLoginController = async(req,res)=>{
             email:user.email
         }
 
-        return res.status(statusCodes.OK).json({success:true,message:'Admin login successfull', redirect:'/admin/dashboard'})
+        return res.status(StatusCodes.OK).json({success:true,message:'Admin login successfull', redirect:'/admin/dashboard'})
     }catch(error){
-        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
 

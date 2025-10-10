@@ -5,12 +5,11 @@ const {Schema} = mongoose
 const userSchema = new Schema({
     username: {
         type: String,
-        required: function(){
-            return !this.googleId
-        },
+        required:true,
         unique: true,
         trim: true
     },
+
     email: {
         type: String,
         required:true,
@@ -18,35 +17,38 @@ const userSchema = new Schema({
         lowercase: true,
         trim: true
     },
+
     phone: {
         type: String,
-        required: function(){
-            return !this.googleId
-        },
+        required:true,
         unique: true
     },
+
     password: {
         type: String,
-        required: function(){
-            return !this.googleId
-        }
+        required:true
     },
+
     googleId: {
-         type: String 
+         type: String,
+         default:null
     },
 
     otp: {
         type: String,
         default: null
     },
+
     expireOtp: {
         type: Date,
         default: null
     },
+
     isAdmin:{
         type:Boolean,
         default:false
     },
+
     isVerified: {
         type: Boolean,
         default: false
@@ -62,7 +64,14 @@ const userSchema = new Schema({
         enum:['admin','user'],
         default:'user'
 
+    },
+
+    avatar:{
+        type:String,
+        required:false,
+        default:'/images/default-avatar.png'
     }
+
 }, {
     timestamps: true
 });

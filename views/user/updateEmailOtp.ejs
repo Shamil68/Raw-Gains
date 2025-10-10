@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RawGains - Verify OTP</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80') no-repeat center center;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            color: #333;
+            transition: transform 0.3s ease;
+        }
+
+        .form-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-box h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .form-box h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: #3498db;
+            border-radius: 2px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #3498db;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            text-align: left;
+            margin-top: 5px;
+            display: block;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #2980b9, #1a252f);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        button:disabled {
+            background-color: #bdbdbd !important;
+            /* grey background */
+            color: #6d6d6d !important;
+            /* light grey text */
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+
+        @media (max-width: 576px) {
+            .form-box {
+                padding: 30px 20px;
+            }
+
+            .form-box h2 {
+                font-size: 24px;
+            }
+
+            .input-group input {
+                padding: 12px 15px;
+            }
+
+            button {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2>Verify OTP</h2>
+            <p class="timer" id="timer">Time remaining: 60s</p>
+            <form id="verify-otp-form" action="/verify-otp" method="POST">
+                <div class="input-group">
+                    <input type="text" name="otp" placeholder="Enter OTP" id="otp" maxlength="6">
+                    <div class="error" id="otp-error"></div>
+                </div>
+                <button type="submit" id="submit-btn">Verify OTP</button>
+            </form>
+            <div class="links">
+                <button id="update-email-resend-otp">Resend OTP</button>
+
+                <a href="/profile"><i class="fas fa-arrow-left"></i> Back to Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // const verifyOtpForm = document.getElementById('verify-otp-form');
+
+        let timeLeft = 60;
+        const timerElement = document.getElementById('timer');
+        const submitButton = document.getElementById('submit-btn');
+        const resendButton = document.getElementById('update-email-resend-otp');
+        const otpInput = document.getElementById('otp');
+
+        otpInput.focus();
+
+        // Start timer function
+        function startTimer() {
+            resendButton.disabled = true;
+            submitButton.disabled = false;
+
+            const timer = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `Time remaining: ${timeLeft}s`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerElement.textContent = 'OTP expired';
+                    submitButton.disabled = true;
+                    resendButton.disabled = false;
+                }
+            }, 1000);
+
+            return timer;
+        }
+
+        let timer = startTimer();
+
+        // Verify OTP
+        document.getElementById('verify-otp-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            document.getElementById('otp-error').textContent = '';
+
+            const otp = otpInput.value;
+
+            if (!otp) {
+                document.getElementById('otp-error').textContent = 'OTP is required';
+                return;
+            } else if (!/^\d{6}$/.test(otp)) {
+                document.getElementById('otp-error').textContent = 'OTP must be 6 digits';
+                return;
+            }
+
+            try {
+                const res = await fetch('/update-email-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ otp })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'OTP Verified',
+                        text: 'Proceed to update your email'
+                    }).then(() => window.location.href = data.redirect);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'OTP verification failed'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Server not reachable'
+                });
+            }
+        });
+
+        // Resend OTP
+        resendButton.addEventListener('click', async () => {
+            try {
+                resendButton.disabled = true;
+                const res = await fetch('/updateEmail-resendOtp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'OTP Sent',
+                        text: data.message
+                    });
+
+                    clearInterval(timer);
+                    timeLeft = 60;
+                    timer = startTimer();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                    resendButton.disabled = false;
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Server error'
+                });
+                resendButton.disabled = false;
+            }
+        });
+
+    </script>
+</body>
+
+</html>

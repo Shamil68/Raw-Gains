@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport')
 const {signupMiddleware, loginMiddleware, allowOnlyLoggedIn, preventAuthForLoggedUsers, forgotPasswordMiddleware, resetPasswordMiddleware, checkBlockUser} = require('../middlewares/userValidation');
-const { signupController, signupOtpController, signupResendOtpController, loadSignupPage, loadSignupOtpPage, loadLoginPage, loginController, logoutController, loadForgotPasswordPage, forgotPasswordController, loadResetPasswordPage, resetPasswordController, loadForgotPasswordOtpPage, forgotPasswordOtpController,forgotPasswordResendOtpController } = require('../controllers/user/userAuthController');
+const {signupController, signupOtpController, signupResendOtpController, loadSignupPage, loadSignupOtpPage, loadLoginPage, loginController, logoutController, loadForgotPasswordPage, forgotPasswordController, loadResetPasswordPage, resetPasswordController, loadForgotPasswordOtpPage, forgotPasswordOtpController,forgotPasswordResendOtpController } = require('../controllers/user/userAuthController');
 const {loadHomePage,loadShopPage,loadProductDetails} = require('../controllers/user/userController');
+const {loadProfile, loadVerifyEmailPage, loadUpdatePasswordPage, verifyEmailController, updatePasswordController, loadUpdateEmailOtp, updateEmailOtpController, loadUpdateEmail, updateEmailResendOtpController, updateEmailController, updateProfileImage} = require('../controllers/user/profileController')
 const statusCodes = require('../utils/statusCodes');
 
 
@@ -15,7 +16,13 @@ router.post('/forgot-password',forgotPasswordMiddleware,forgotPasswordController
 router.post('/forgotPassword-otp',forgotPasswordOtpController)
 router.post('/forgotPasswordResend-otp', forgotPasswordResendOtpController)
 router.post('/reset-password',resetPasswordMiddleware,resetPasswordController)
-// router.post('/checkBlockedUser',checkBlockUser)
+router.post('/verify-email',verifyEmailController)
+router.post('/update-email-otp',updateEmailOtpController)
+router.post('/updateEmail-ResendOtp',updateEmailResendOtpController)
+router.post('/update-email',updateEmailController)
+router.patch('/update-password', updatePasswordController)
+// router.post('/update-profile-image',updateProfileImage)
+
 
 
 router.get('/otp',preventAuthForLoggedUsers,loadSignupOtpPage)
@@ -29,6 +36,11 @@ router.get('/product-details/:id',allowOnlyLoggedIn,loadProductDetails)
 router.get('/forgot-password',preventAuthForLoggedUsers,loadForgotPasswordPage)
 router.get('/forgotPassword-otp',preventAuthForLoggedUsers,loadForgotPasswordOtpPage)
 router.get('/reset-password',preventAuthForLoggedUsers,loadResetPasswordPage)
+router.get('/profile',allowOnlyLoggedIn,loadProfile)
+router.get('/change-email',allowOnlyLoggedIn,loadVerifyEmailPage)
+router.get('/change-password',allowOnlyLoggedIn,loadUpdatePasswordPage)
+router.get('/update-email-otp',allowOnlyLoggedIn,loadUpdateEmailOtp)
+router.get('/update-email',loadUpdateEmail)
 
 
 // Start Google login process
