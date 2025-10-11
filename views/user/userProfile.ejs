@@ -188,11 +188,11 @@
                     <div class="user-details">
                         <p><strong>Name:</strong> <%= user.username %></p>
                         <p><strong>Email:</strong> <%= user.email %></p>
-                        <a href="/changeEmail" onclick="verifyCurrentEmailPage(event)">Change Email?</a>
+                        <!-- <a href="/changeEmail" onclick="verifyCurrentEmailPage(event)">Change Email?</a> -->
                         <p><strong>Password:</strong> <%= user.googleId ? 'Set via Google' : (user.password ? '********' : 'Not set') %></p>
-                        <a href="/changePassword" onclick="updatePasswordPage(event)">Change Password?</a>
+                        <!-- <a href="/changePassword" onclick="updatePasswordPage(event)">Change Password?</a> -->
                     </div>
-                    <button class="edit-btn" onclick="redirectToEditProfile()">Edit Profile</button>
+                    <button class="edit-btn" onclick="redirectToEditProfile(event)">Edit Profile</button>
                 </div>
             </div>
         </div>
@@ -250,6 +250,25 @@ fileInput.addEventListener('change', async (e) => {
         });
     }
 });
+
+
+function redirectToEditProfile(event) {
+    event.preventDefault()
+        window.location.href = '/edit-profile';
+    }
+
+    // function verifyCurrentEmailPage(event) {
+    //     event.preventDefault();
+    //     window.location.href = '/change-email';
+    // }
+
+    // function updatePasswordPage(event) {
+    //     event.preventDefault();
+    //     window.location.href = '/change-password';
+    // }
+
+
+
 </script>
 </body>
 </html>

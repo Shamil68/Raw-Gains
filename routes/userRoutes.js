@@ -4,7 +4,7 @@ const passport = require('passport')
 const {signupMiddleware, loginMiddleware, allowOnlyLoggedIn, preventAuthForLoggedUsers, forgotPasswordMiddleware, resetPasswordMiddleware, checkBlockUser} = require('../middlewares/userValidation');
 const {signupController, signupOtpController, signupResendOtpController, loadSignupPage, loadSignupOtpPage, loadLoginPage, loginController, logoutController, loadForgotPasswordPage, forgotPasswordController, loadResetPasswordPage, resetPasswordController, loadForgotPasswordOtpPage, forgotPasswordOtpController,forgotPasswordResendOtpController } = require('../controllers/user/userAuthController');
 const {loadHomePage,loadShopPage,loadProductDetails} = require('../controllers/user/userController');
-const {loadProfile, loadVerifyEmailPage, loadUpdatePasswordPage, verifyEmailController, updatePasswordController, loadUpdateEmailOtp, updateEmailOtpController, loadUpdateEmail, updateEmailResendOtpController, updateEmailController, updateProfilePicture} = require('../controllers/user/profileController')
+const {loadProfile, loadVerifyEmailPage, loadUpdatePasswordPage, verifyEmailController, updatePasswordController, loadUpdateEmailOtp, updateEmailOtpController, loadUpdateEmail, updateEmailResendOtpController, updateEmailController, updateProfilePicture, loadEditProfile, editProfileController} = require('../controllers/user/profileController')
 const statusCodes = require('../utils/statusCodes');
 const { uploadProfilePicture } = require('../helpers/multer');
 
@@ -22,7 +22,7 @@ router.post('/updateEmail-ResendOtp',updateEmailResendOtpController)
 router.post('/update-email',updateEmailController)
 router.patch('/update-password', updatePasswordController)
 router.post('/update-profile-picture',uploadProfilePicture,updateProfilePicture)
-
+router.post('/edit-profile',editProfileController)
 
 
 router.get('/otp',preventAuthForLoggedUsers,loadSignupOtpPage)
@@ -41,6 +41,7 @@ router.get('/change-email',allowOnlyLoggedIn,loadVerifyEmailPage)
 router.get('/change-password',allowOnlyLoggedIn,loadUpdatePasswordPage)
 router.get('/update-email-otp',allowOnlyLoggedIn,loadUpdateEmailOtp)
 router.get('/update-email',loadUpdateEmail)
+router.get('/edit-profile',loadEditProfile)
 
 
 // Start Google login process

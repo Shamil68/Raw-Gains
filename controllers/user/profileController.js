@@ -284,6 +284,10 @@ const updateEmailController = async(req,res)=>{
 const loadUpdatePasswordPage = async(req,res)=>{
     try{
 
+        if(!req.session.user){
+            return res.status(statusCodes.UNAUTHORIZED).json({success:false,message:'Unauthorized'})
+        }
+
         res.render('changePassword')
 
     }catch(error){
@@ -375,6 +379,55 @@ const updateProfilePicture = async (req, res) => {
 };
 
 
+const loadEditProfile = async(req,res)=>{
+
+    try{
+
+        if(!req.session.user){
+          return res.status(statusCodes.UNAUTHORIZED).json({success:false,messgae:'Unauthorized'})
+        }
+          const user = await User.findById(req.session.user._id);
+
+        res.render('editProfile',{user})
+
+    }catch(error){
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
+    }
+}
+
+
+const editProfileController = async(req,res)=>{
+
+    try{
+
+        if(!req.session.user){
+            return res.status(statusCodes.UNAUTHORIZED).json({success:false,message:'unauthorized'})
+        }
+
+        const {username} = req.body
+
+        const user = await User.findById(req.session.user._id)
+
+        if(!username){
+            return res.status(statusCodes.BAD_REQUEST).json({sucess:false,message:'Username required'})
+        }
+
+        if(username.length < 3){
+            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Userame must include minimum 3 characters'})
+
+        }
+
+        user.username = username
+        await user.save()
+
+
+        return res.status(statusCodes.OK).json({success:false,message:'Username updated successfully',redirect:'/profile'})
+
+    }catch(error){
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
+    }
+}
+
 
 
 module.exports = {
@@ -388,5 +441,7 @@ module.exports = {
     updateEmailController,
     loadUpdatePasswordPage,
     updatePasswordController,
-    updateProfilePicture
+    updateProfilePicture,
+    loadEditProfile,
+    editProfileController
 }

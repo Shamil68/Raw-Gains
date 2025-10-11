@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RawGains - Edit Profile</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80') no-repeat center center;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            color: #333;
+            transition: transform 0.3s ease;
+        }
+
+        .form-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-box h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .form-box h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: #3498db;
+            border-radius: 2px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #3498db;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            text-align: left;
+            margin-top: 5px;
+            display: block;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #2980b9, #1a252f);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        .changeEmail{
+            text-decoration: none;
+            margin-right: 245px;
+        }
+
+
+        .changePassword{
+            text-decoration: none;
+            margin-right: 210px;
+
+        }
+
+        @media (max-width: 576px) {
+            .form-box {
+                padding: 30px 20px;
+            }
+            
+            .form-box h2 {
+                font-size: 24px;
+            }
+            
+            .input-group input {
+                padding: 12px 15px;
+            }
+            
+            button {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2>Edit Profile</h2>
+            <form id="edit-profile-form" action="/edit-profile" method="POST">
+                <div class="input-group">
+                    <input type="text" name="username" value="<%= user.username %>" placeholder="Enter new username" id="email">
+                    <div class="error" id="username-error"></div>
+
+                    <input type="text" name="email" value="<%= user.email %>" placeholder="Enter new email" id="username" disabled>
+                    <a class="changeEmail" href="/changeEmail" onclick="verifyCurrentEmailPage(event)">Change Email?</a>
+
+                    <input type="text" name="password" value="<%= user.googleId ? 'Set via Google' : (user.password ? '********' : 'Not set') %>" placeholder="Enter new password" id="password" disabled>
+                    <a class="changePassword" href="/changePassword"  onclick="updatePasswordPage(event)">Change Password?</a>
+
+                </div>
+
+                <button type="submit">Update Username</button>
+            </form>
+            <div class="links">
+                <a href="/profile"><i class="fas fa-arrow-left"></i> Back to Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const editProfileForm = document.getElementById('edit-profile-form')
+
+         editProfileForm.addEventListener('submit',async (e)=>{
+            e.preventDefault()
+
+        document.getElementById('username-error').textContent=''
+
+        const username = document.getElementById('username').value
+
+        if(!username){
+            document.getElementById('username-error').textContent='Username required'
+            return
+        }
+
+        if(username.length < 3){
+            document.getElementById('username-error').textContent='Username must icude atleast 3 characters'
+            return
+        }
+
+        try{
+            const res = await fetch('/edit-profile',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({username})
+
+            })
+
+            const data = await res.json()
+
+            if(res.ok){
+                Swal.fire({
+                    icon:'success',
+                    title:'Success',
+                    text:data.message
+                }).then(()=>{
+                    window.location.href = data.redirect
+                })
+            }else{
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:data.message
+                })
+            }
+        }catch(error){
+            Swal.fire({
+                icon:'error',
+                title:'error',
+                text:'Server error'
+            })
+        }
+
+
+         })
+
+ function verifyCurrentEmailPage(event) {
+        event.preventDefault();
+        window.location.href = '/change-email';
+    }
+
+    function updatePasswordPage(event) {
+        event.preventDefault();
+        window.location.href = '/change-password';
+    }
+
+
+        
+    </script>
+</body>
+</html>
