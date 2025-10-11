@@ -4,7 +4,7 @@ const {adminLoginMiddleware,preventAuthForLoggedUsers,allowOnlyLoggedInAdmin }= 
 const {adminLoginController,loadAdminLogin,adminLogout,loadDashboard,} = require('../controllers/admin/adminController')
 const{customerController,blockCustomer,unblockCustomer} = require('../controllers/admin/customerController')
 const { addProductController, productController, blockProduct, unblockProduct, loadEditProduct, deleteProductImageController, updateProductController } = require('../controllers/admin/productController')
-const handleMultipleUploads = require('../helpers/multer')
+const {handleMultipleUploads} = require('../helpers/multer')
 const { addCategoryController, categoryController, deleteCategoryController, updateCategoryController, loadEditCategory } = require('../controllers/admin/categoryController')
 // const upload = multer()
 

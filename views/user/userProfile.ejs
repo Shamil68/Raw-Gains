@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RawGains - User Profile</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
@@ -32,13 +32,11 @@
             background-color: #383636;
             padding: 20px;
             height: calc(100vh - 120px);
-            /* Adjust for header/footer (assuming 60px each) */
             position: relative;
             display: flex;
             flex-direction: column;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
             margin-top: 60px;
-            /* Push below header */
         }
 
         .sidebar h2 {
@@ -69,12 +67,10 @@
             flex: 1;
             padding: 0 20px;
             margin-left: 270px;
-            /* Sidebar width + padding */
         }
 
         .container {
             background-color: #383636;
-            /* margin-top: 160px; */
             border-radius: 10px;
             padding: 40px;
             max-width: 600px;
@@ -87,12 +83,10 @@
             color: #ff5722;
             font-size: 2.5em;
             margin-bottom: 10px;
-            /* Reduced to fit image closer */
         }
 
         .profile-section {
             margin-top: 20px;
-            /* Space after heading */
         }
 
         .profile-image {
@@ -101,13 +95,27 @@
             border-radius: 50%;
             object-fit: cover;
             margin: 0 auto 20px;
-            /* Centered below heading */
             border: 2px solid #ff5722;
+            cursor: pointer;
         }
 
         .user-details p {
             font-size: 1.2em;
             margin: 10px 0;
+        }
+
+        .user-details a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 1em;
+            margin-top: 5px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .user-details a:hover {
+            color: #2980b9;
+            text-decoration: underline;
         }
 
         .edit-btn {
@@ -126,71 +134,9 @@
             background-color: #e64a19;
         }
 
-        #profilePic {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-            border: 3px solid #4CAF50;
-            transition: 0.3s;
+        .file-input {
+            display: none;
         }
-
-        #profilePic:hover {
-            opacity: 0.8;
-            transform: scale(1.05);
-        }
-
-
-        
-/* 
-.profile-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 40px;
-}
-
-.profile-pic-wrapper {
-  position: relative;
-  width: 130px;
-  height: 130px;
-}
-
-#profilePic {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #4CAF50;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.edit-icon {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background-color: #4CAF50;
-  color: white;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid white;
-  cursor: pointer;
-  font-size: 16px;
-  transition: 0.3s;
-}
-
-.edit-icon:hover {
-  background-color: #45a049;
-  transform: scale(1.1);
-} */
-
-
 
         @media (max-width: 768px) {
             .content {
@@ -215,97 +161,95 @@
         }
     </style>
 </head>
-
 <body>
     <%- include('../../views/partials/user/header') %>
 
-        <div class="content">
-            <div class="sidebar">
-                <h2>My Account</h2>
-                <a href="/profile" class="active">Account Details</a>
-                <a href="/addresses">Address</a>
-                <a href="/orders">Orders</a>
-                <a href="/wishlist">Wishlist</a>
-                <a href="/cart">Cart</a>
-                <a href="/wallet">Wallet</a>
-            </div>
+    <div class="content">
+        <div class="sidebar">
+            <h2>My Account</h2>
+            <a href="/profile" class="active">Account Details</a>
+            <a href="/addresses">Address</a>
+            <a href="/orders">Orders</a>
+            <a href="/wishlist">Wishlist</a>
+            <a href="/cart">Cart</a>
+            <a href="/wallet">Wallet</a>
+        </div>
 
-            <div class="main-content">
-                <div class="container" style="margin-top: 60px;">
-                    <h1>RawGains Profile</h1>
+        <div class="main-content">
+            <div class="container" style="margin-top: 60px;">
+                <h1>RawGains Profile</h1>
 
-                    <!-- Profile Section -->
-                    <div class="profile-section">
-
-                        <img id="profile-pic" src="uploads/customer3.jpeg"  alt="Profile Image" class="profile-image">;
-   
-                         <!-- <div class="edit-icon"> -->
-                       <!-- <i class="fa fa-pencil"></i> -->
-                        <!-- </div> -->
-                        <input type="file" id="fileInput" accept="image/*" style="display: none;" />
-                        <div class="user-details">
-                            <p><strong>Name:</strong>
-                                <%= user.username %>
-                            </p>
-                            <p><strong>Email:</strong>
-                                <%= user.email %>
-                            </p>
-                            <a href="/change-email" onclick="verifyCurrentEmailPage()"
-                                style="color: rgb(110, 147, 235);">Change email?</a>
-
-                            <p><strong>Password:</strong>
-                                <%= user.googleId ? 'Set via google' : (user.password ? '********' : 'Not set' ) %>
-                            </p>
-                            <a href="/change-password" onclick="updatePasswordPage(event)"
-                                style="color:rgb(110, 147, 235); ;">Change Password?</a>
-                        </div>
-
-                        <button class="edit-btn" onclick="redirectToEditProfile(event)">Edit Profile</button>
+                <!-- Profile Section -->
+                <div class="profile-section">
+                    <img src="<%= user.avatar %>" alt="Profile Image" class="profile-image" id="profileImage">
+                    <form id="uploadForm" action="/update-profile-picture" method="POST" enctype="multipart/form-data">
+                        <input type="file" name="profilePicture" id="fileInput" class="file-input" accept="image/*">
+                    </form>
+                    <div class="user-details">
+                        <p><strong>Name:</strong> <%= user.username %></p>
+                        <p><strong>Email:</strong> <%= user.email %></p>
+                        <a href="/changeEmail" onclick="verifyCurrentEmailPage(event)">Change Email?</a>
+                        <p><strong>Password:</strong> <%= user.googleId ? 'Set via Google' : (user.password ? '********' : 'Not set') %></p>
+                        <a href="/changePassword" onclick="updatePasswordPage(event)">Change Password?</a>
                     </div>
+                    <button class="edit-btn" onclick="redirectToEditProfile()">Edit Profile</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <%- include('../../views/partials/user/footer') %>
+    <%- include('../../views/partials/user/footer') %>
 
-            <script>
-                function redirectToEditProfile() {
-                    window.location.href = '/edit-profile';
-                }
+    <script>
 
-                function verifyCurrentEmailPage(event) {
-                    event.preventDefault()
-                    window.location.href = '/change-email'
-                }
+        const uploadForm = document.getElementById('uploadForm');
+        const profileImage = document.getElementById('profileImage');
+const fileInput = document.getElementById('fileInput');
 
-                function updatePasswordPage(event) {
-                    event.preventDefault()
-                    window.location.href = '/change-password'
-                }
+// Trigger file input when profile image is clicked
+profileImage.addEventListener('click', () => {
+    fileInput.click();
+});
 
-                const profilePic = document.getElementById('profilePic');
-                const fileInput = document.getElementById('fileInput');
-                const editIcon = document.querySelector('.edit-icon');
+// Handle file selection and upload via fetch
+fileInput.addEventListener('change', async (e) => {
+    const file = fileInput.files[0];
+    if (!file) return;
 
+    const formData = new FormData();
+    formData.append('profilePicture', file); // name must match your multer field in backend
 
-                profilePic.addEventListener('click', () => {
-                    fileInput.click();
-                });
+    try {
+        const res = await fetch('/update-profile-picture', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include' // if using session auth
+        });
 
-                fileInput.addEventListener('change', (event) => {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            profilePic.src = e.target.result; // Preview the selected image
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
+        const data = await res.json();
 
-
-
-            </script>
+        if (res.ok) {
+            profileImage.src = URL.createObjectURL(file); // preview new image
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message || 'Profile picture updated!'
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Failed to update profile picture'
+            });
+        }
+    } catch (err) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Server not reachable'
+        });
+    }
+});
+</script>
 </body>
-
 </html>

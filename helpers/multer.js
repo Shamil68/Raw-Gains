@@ -1,4 +1,5 @@
 const multer = require('multer');
+// const path = require('path');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -11,6 +12,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-const handleMultipleUploads = upload.array("images", 10);
+const handleUploads = (fieldName, maxCount) => {
+    return upload.array(fieldName, maxCount);
+};
 
-module.exports = handleMultipleUploads;
+const handleMultipleUploads = upload.array("images", 10);
+const uploadProfilePicture = upload.single('profilePicture');
+
+
+module.exports = {handleMultipleUploads,uploadProfilePicture};

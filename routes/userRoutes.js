@@ -4,9 +4,9 @@ const passport = require('passport')
 const {signupMiddleware, loginMiddleware, allowOnlyLoggedIn, preventAuthForLoggedUsers, forgotPasswordMiddleware, resetPasswordMiddleware, checkBlockUser} = require('../middlewares/userValidation');
 const {signupController, signupOtpController, signupResendOtpController, loadSignupPage, loadSignupOtpPage, loadLoginPage, loginController, logoutController, loadForgotPasswordPage, forgotPasswordController, loadResetPasswordPage, resetPasswordController, loadForgotPasswordOtpPage, forgotPasswordOtpController,forgotPasswordResendOtpController } = require('../controllers/user/userAuthController');
 const {loadHomePage,loadShopPage,loadProductDetails} = require('../controllers/user/userController');
-const {loadProfile, loadVerifyEmailPage, loadUpdatePasswordPage, verifyEmailController, updatePasswordController, loadUpdateEmailOtp, updateEmailOtpController, loadUpdateEmail, updateEmailResendOtpController, updateEmailController, updateProfileImage} = require('../controllers/user/profileController')
+const {loadProfile, loadVerifyEmailPage, loadUpdatePasswordPage, verifyEmailController, updatePasswordController, loadUpdateEmailOtp, updateEmailOtpController, loadUpdateEmail, updateEmailResendOtpController, updateEmailController, updateProfilePicture} = require('../controllers/user/profileController')
 const statusCodes = require('../utils/statusCodes');
-
+const { uploadProfilePicture } = require('../helpers/multer');
 
 router.post('/signup', signupMiddleware, signupController);
 router.post('/verify-otp', signupOtpController);
@@ -21,7 +21,7 @@ router.post('/update-email-otp',updateEmailOtpController)
 router.post('/updateEmail-ResendOtp',updateEmailResendOtpController)
 router.post('/update-email',updateEmailController)
 router.patch('/update-password', updatePasswordController)
-// router.post('/update-profile-image',updateProfileImage)
+router.post('/update-profile-picture',uploadProfilePicture,updateProfilePicture)
 
 
 

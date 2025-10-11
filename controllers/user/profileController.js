@@ -2,11 +2,12 @@ const User = require('../../models/userSchema')
 const bcrypt = require("bcrypt");
 const statusCodes = require('../../utils/statusCodes')
 const nodemailer = require('nodemailer')
+
+// const sharp = require('sharp')
+// const path = require('path')
 const dotenv = require('dotenv');
 const { session } = require('passport');
 dotenv.config();
-
-
 
 
 const loadProfile = async(req,res)=>{
@@ -346,27 +347,33 @@ const updatePasswordController = async(req,res)=>{
 
 
 
-const updateProfileImage = async (req, res) => {
+const updateProfilePicture = async (req, res) => {
+
     try {
-        if (!req.session.user || !req.file) {
-            return res.status(400).json({ success: false, message: 'No file uploaded or unauthorized' });
+        if (!req.session.user) {
+            return res.status(statusCodes.UNAUTHORIZED).json({success:false, message: 'Unauthorized' });
         }
 
-        const user = await User.findById(req.session.user.id);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
+        if (!req.file) {
+            return res.status(statusCodes.BAD_REQUEST).json({success:false, message: 'No file uploaded' });
         }
 
-        // Update avatar path (assuming files are saved in public/uploads/)
-        user.avatar = `/uploads/${req.file.filename}`;
+        const user = await User.findById(req.session.user._id);
+        if (!user) {    
+            return res.status(statusCodes.BAD_REQUEST).json({success:false, message: 'User not found' });
+        }
+
+        const newAvatar = req.file.filename;
+        user.avatar = `/uploads/${newAvatar}`;
         await user.save();
-
-        res.json({ success: true, message: 'Profile image updated' });
+    
+        return res.status(statusCodes.OK).json({success:true, message: 'Profile picture updated successfully', newAvatar });
     } catch (error) {
-        console.error('Error updating profile image:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('Error uploading profile picture:', error);
+        res.status(statusCodes.INTERNAL_SERVER_ERROR).json({succes:false, message: 'Server error' });
     }
 };
+
 
 
 
@@ -381,5 +388,5 @@ module.exports = {
     updateEmailController,
     loadUpdatePasswordPage,
     updatePasswordController,
-    updateProfileImage
+    updateProfilePicture
 }
