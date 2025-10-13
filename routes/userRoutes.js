@@ -7,6 +7,9 @@ const {loadHomePage,loadShopPage,loadProductDetails} = require('../controllers/u
 const {loadProfile, loadVerifyEmailPage, loadUpdatePasswordPage, verifyEmailController, updatePasswordController, loadUpdateEmailOtp, updateEmailOtpController, loadUpdateEmail, updateEmailResendOtpController, updateEmailController, updateProfilePicture, loadEditProfile, editProfileController} = require('../controllers/user/profileController')
 const statusCodes = require('../utils/statusCodes');
 const { uploadProfilePicture } = require('../helpers/multer');
+const { loadAddressPage, loadAddAddress, addAddresscontroller, deleteAddress } = require('../controllers/user/addressController');
+
+
 
 router.post('/signup', signupMiddleware, signupController);
 router.post('/verify-otp', signupOtpController);
@@ -23,6 +26,9 @@ router.post('/update-email',updateEmailController)
 router.patch('/update-password', updatePasswordController)
 router.post('/update-profile-picture',uploadProfilePicture,updateProfilePicture)
 router.post('/edit-profile',editProfileController)
+router.post('/add-address',addAddresscontroller)
+router.delete('/delete-address/:id',deleteAddress)
+
 
 
 router.get('/otp',preventAuthForLoggedUsers,loadSignupOtpPage)
@@ -40,8 +46,11 @@ router.get('/profile',allowOnlyLoggedIn,loadProfile)
 router.get('/change-email',allowOnlyLoggedIn,loadVerifyEmailPage)
 router.get('/change-password',allowOnlyLoggedIn,loadUpdatePasswordPage)
 router.get('/update-email-otp',allowOnlyLoggedIn,loadUpdateEmailOtp)
-router.get('/update-email',loadUpdateEmail)
-router.get('/edit-profile',loadEditProfile)
+router.get('/update-email',allowOnlyLoggedIn,loadUpdateEmail)
+router.get('/edit-profile',allowOnlyLoggedIn,loadEditProfile)
+router.get('/addresses',allowOnlyLoggedIn,loadAddressPage)
+router.get('/add-address',allowOnlyLoggedIn,loadAddAddress)
+
 
 
 // Start Google login process

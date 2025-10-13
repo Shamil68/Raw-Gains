@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RawGains - Add New Address</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80') no-repeat center center;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            color: #333;
+            transition: transform 0.3s ease;
+        }
+
+        .form-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-box h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .form-box h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: #3498db;
+            border-radius: 2px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #3498db;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 12px;
+            text-align: left;
+            margin-top: 5px;
+            display: block;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #2980b9, #1a252f);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 576px) {
+            .form-box {
+                padding: 30px 20px;
+            }
+
+            .form-box h2 {
+                font-size: 24px;
+            }
+
+            .input-group input,
+            .input-group select {
+                padding: 10px;
+            }
+
+            button {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2>Add New Address</h2>
+            <button type="button" id="current-location-btn" style="margin-bottom: 20px;">Use Current Location</button>
+            <form id="add-address-form" action="/add-address" method="POST">
+                <div class="input-group">
+                    <label for="addressType">Address Type</label>
+                    <select name="addressType" id="addressType">
+                        <option value="Home">Home</option>
+                        <option value="Work">Work</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" name="fullName" id="fullName" placeholder="Enter full name">
+                    <div class="error" id="fullName-error"></div>
+                </div>
+                <div class="input-group">
+                    <label for="country">Country</label>
+                    <input type="text" name="country" id="country" placeholder="Enter country">
+                    <div class="error" id="country-error"></div>
+                </div>
+                <div class="input-group">
+                    <label for="state">State</label>
+                    <input name="state" id="state" placeholder="Enter state name">
+                    <div class="error" id="state-error"></div>
+                </div>
+                <div class="input-group">
+                    <label for="city">City</label>
+                    <input name="city" id="city" placeholder="Enter city name">
+                    <div class="error" id="city-error"></div>
+                </div>
+                <div class="input-group">
+                    <label for="landmark">Landmark</label>
+                    <input type="text" name="landmark" id="landmark" placeholder="Enter landmark">
+                    <div class="error" id="landmark-error"></div>
+                </div>
+                <div class="input-group">
+                    <label for="streetAddress">Street Address</label>
+                    <input type="text" name="streetAddress" id="streetAddress" placeholder="Enter street address">
+                    <div class="error" id="streetAddress-error"></div>
+                </div>
+                <div class="input-group">
+                    <label for="pincode">Pincode</label>
+                    <input type="text" name="pincode" id="pincode" placeholder="Enter pincode">
+                    <div class="error" id="pincode-error"></div>
+                </div>
+                <div class="input-group">
+                    <label for="phone">Phone</label>
+                    <input type="text" name="phone" id="phone" placeholder="Enter phone number">
+                    <div class="error" id="phone-error"></div>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" placeholder="Enter email">
+                    <div class="error" id="email-error"></div>
+                </div>
+                <div class="input-group">
+                    <label for="alternativePhone">Alternative Phone</label>
+                    <input type="text" name="alternativePhone" id="alternativePhone"
+                        placeholder="Enter alternative phone">
+                    <div class="error" id="alternative-phone-error"></div>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="links">
+                <a href="/addresses">Back to Addresses</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const addAddressForm = document.getElementById('add-address-form');
+
+        document.getElementById('current-location-btn').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    try {
+
+                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                        const data = await res.json();
+                        document.getElementById('country').value = data.address.country || '';
+                        document.getElementById('state').value = data.address.state || '';
+                        document.getElementById('city').value = data.address.city || data.address.town || data.address.village || '';
+                        document.getElementById('landmark').value = data.address.suburb || data.address.neighbourhood || ''
+                        document.getElementById('pincode').value = data.address.postcode || ''  
+                        document.getElementById('streetAddress').value = data.address.road || data.address.street || '';
+
+
+
+                        Swal.fire({ 
+                            icon: 'success', 
+                            title: 'Location detected!' 
+                        });
+
+                    } catch (error) {
+                        Swal.fire({ 
+                            icon: 'error', 
+                            title: 'Error', 
+                            text: 'Unable to fetch location details' });
+                    }
+                }, () => {
+
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'Error', 
+                        text: 'Permission denied or unable to detect location' });
+                });
+
+            } else {
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'Error', 
+                    text: 'Geolocation is not supported by your browser' });
+            }
+        });
+
+        addAddressForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.error').forEach(error => error.textContent = '');
+
+            const addressType = document.getElementById('addressType').value;
+            const fullName = document.getElementById('fullName').value;
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state').value;
+            const city = document.getElementById('city').value;
+            const landmark = document.getElementById('landmark').value;
+            const streetAddress = document.getElementById('streetAddress').value;
+            const pincode = document.getElementById('pincode').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const alternativePhone = document.getElementById('alternativePhone').value;
+
+            let isValid = true;
+
+            if (!fullName) {
+            document.getElementById('fullName-error').textContent = 'Full name is required'; 
+            isValid = false; }
+
+            if (!country) {
+            document.getElementById('country-error').textContent = 'Country is required'; 
+            isValid = false; }
+
+            if (!state) {
+            document.getElementById('state-error').textContent = 'State is required'; 
+            isValid = false; }
+
+            if (!city) { 
+            document.getElementById('city-error').textContent = 'City is required'; 
+            isValid = false; }
+
+            if (!landmark) { 
+            document.getElementById('landmark-error').textContent = 'Landmark is required'; 
+            isValid = false; }
+
+            if (!streetAddress) {
+            document.getElementById('streetAddress-error').textContent = 'Street address is required'; 
+            isValid = false; }
+
+            if (!pincode) { 
+            document.getElementById('pincode-error').textContent = 'Pincode is required'; 
+            isValid = false; }
+
+            if (!phone) { 
+            document.getElementById('phone-error').textContent = 'Phone is required'; 
+            isValid = false; }
+
+            else if (!/^\d{10}$/.test(phone)) 
+            { document.getElementById('phone-error').textContent = 'Phone must be 10 digits'; 
+            isValid = false; }
+
+            if (!email) { 
+            document.getElementById('email-error').textContent = 'Email is required'; 
+            isValid = false; }
+
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) 
+          { document.getElementById('email-error').textContent = 'Invalid email format'; 
+            isValid = false; }
+
+            if (!alternativePhone) 
+          { document.getElementById('alternative-phone-error').textContent = 'An alternative phone is required'; 
+          isValid = false; }
+
+          if (!isValid) return;
+
+            try {
+                const res = await fetch('/add-address', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ addressType, fullName, country, state, city, landmark, streetAddress, pincode, phone, email, alternativePhone })
+                });
+
+                const data = await res.json();
+                if (res.ok)
+                 Swal.fire({ 
+                     icon: 'success', 
+                     title: 'Success', 
+                     text: data.message 
+                    }).then(() => {
+                         window.location.href = data.redirect; });
+
+                else
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'Error', 
+                    text: data.message });
+
+            } catch (error) {
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'Error', 
+                    text: 'Server not reachable' 
+                });
+            }
+        });
+
+    </script>
+</body>
+
+</html>

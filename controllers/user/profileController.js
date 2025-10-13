@@ -2,7 +2,6 @@ const User = require('../../models/userSchema')
 const bcrypt = require("bcrypt");
 const statusCodes = require('../../utils/statusCodes')
 const nodemailer = require('nodemailer')
-
 // const sharp = require('sharp')
 // const path = require('path')
 const dotenv = require('dotenv');
@@ -12,10 +11,7 @@ dotenv.config();
 
 const loadProfile = async(req,res)=>{
     try{
-        if(!req.session.user){
-            return res.redirect('/login')
-        }
-
+        
         const user = await User.findById(req.session.user._id).select('username email avatar password googleId')
 
         // if(!user){
@@ -44,8 +40,8 @@ const loadProfile = async(req,res)=>{
 
 const loadVerifyEmailPage = async(req,res)=>{
     try{
+
         res.render('verifyCurrentEmail')
-       
 
         }catch(error){
             return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
@@ -56,10 +52,6 @@ const loadVerifyEmailPage = async(req,res)=>{
 
 const verifyEmailController = async(req,res)=>{
     try{
-
-        if(!req.session.user){
-            res.status(statusCodes.UNAUTHORIZED).json({message:'Unauthourized'})
-        }
 
         const {currentEmail} = req.body
 
@@ -122,9 +114,7 @@ const verifyEmailController = async(req,res)=>{
 
 const loadUpdateEmailOtp = async(req,res)=>{
     try{
-        if(!req.session.user){
-            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'unauthourized'})
-        }
+        
         res.render('updateEmailOtp')
     }catch(error){
         return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
@@ -174,10 +164,7 @@ const updateEmailOtpController = async(req,res)=>{
 const updateEmailResendOtpController = async(req,res)=>{
 
     try{
-        if(!req.session.user){
-            return res.status(statusCodes.UNAUTHORIZED).json({success:false,message:'Unauthorized'})
-        }
-
+        
         const userId = req.session.user._id
         const user = await User.findById(userId).select('email')
 
@@ -224,9 +211,7 @@ const updateEmailResendOtpController = async(req,res)=>{
 const loadUpdateEmail = async(req,res)=>{
 
     try{
-        if(!req.session.user){
-            return res.status(statusCodes.BAD_REQUEST).json({success:false,message:'Unauthorized'})
-        }
+        
         res.render('updateEmail')
 
     }catch(error){
@@ -238,10 +223,7 @@ const loadUpdateEmail = async(req,res)=>{
 
 const updateEmailController = async(req,res)=>{
 
-    try{
-        if(!req.session.user){
-            return res.status(statusCodes.UNAUTHORIZED).json({success:false,message:'Unauthorized'})
-        }
+    try{   
         
         const {newEmail,confirmEmail} = req.body
         const user = await User.findById(req.session.user._id).select('email')
@@ -284,10 +266,6 @@ const updateEmailController = async(req,res)=>{
 const loadUpdatePasswordPage = async(req,res)=>{
     try{
 
-        if(!req.session.user){
-            return res.status(statusCodes.UNAUTHORIZED).json({success:false,message:'Unauthorized'})
-        }
-
         res.render('changePassword')
 
     }catch(error){
@@ -300,9 +278,6 @@ const loadUpdatePasswordPage = async(req,res)=>{
 const updatePasswordController = async(req,res)=>{
     try{
 
-        if(!req.session.user){
-            return res.status(statusCodes.UNAUTHORIZED).json({success:false,message:'Unauthorized'})
-        }
 
         const {currentPassword,newPassword,confirmPassword} = req.body
 
@@ -354,9 +329,6 @@ const updatePasswordController = async(req,res)=>{
 const updateProfilePicture = async (req, res) => {
 
     try {
-        if (!req.session.user) {
-            return res.status(statusCodes.UNAUTHORIZED).json({success:false, message: 'Unauthorized' });
-        }
 
         if (!req.file) {
             return res.status(statusCodes.BAD_REQUEST).json({success:false, message: 'No file uploaded' });
@@ -383,10 +355,7 @@ const loadEditProfile = async(req,res)=>{
 
     try{
 
-        if(!req.session.user){
-          return res.status(statusCodes.UNAUTHORIZED).json({success:false,messgae:'Unauthorized'})
-        }
-          const user = await User.findById(req.session.user._id);
+        const user = await User.findById(req.session.user._id);
 
         res.render('editProfile',{user})
 
@@ -399,10 +368,6 @@ const loadEditProfile = async(req,res)=>{
 const editProfileController = async(req,res)=>{
 
     try{
-
-        if(!req.session.user){
-            return res.status(statusCodes.UNAUTHORIZED).json({success:false,message:'unauthorized'})
-        }
 
         const {username} = req.body
 
