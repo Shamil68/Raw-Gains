@@ -7,7 +7,7 @@ const {loadHomePage,loadShopPage,loadProductDetails} = require('../controllers/u
 const {loadProfile, loadVerifyEmailPage, loadUpdatePasswordPage, verifyEmailController, updatePasswordController, loadUpdateEmailOtp, updateEmailOtpController, loadUpdateEmail, updateEmailResendOtpController, updateEmailController, updateProfilePicture, loadEditProfile, editProfileController} = require('../controllers/user/profileController')
 const statusCodes = require('../utils/statusCodes');
 const { uploadProfilePicture } = require('../helpers/multer');
-const { loadAddressPage, loadAddAddress, addAddresscontroller, deleteAddress } = require('../controllers/user/addressController');
+const { loadAddressPage, loadAddAddress, addAddresscontroller, deleteAddress, loadEditAddress, updateAddressController } = require('../controllers/user/addressController');
 
 
 
@@ -28,6 +28,7 @@ router.post('/update-profile-picture',uploadProfilePicture,updateProfilePicture)
 router.post('/edit-profile',editProfileController)
 router.post('/add-address',addAddresscontroller)
 router.delete('/delete-address/:id',deleteAddress)
+router.post('/edit-address/:id',updateAddressController)
 
 
 
@@ -50,7 +51,7 @@ router.get('/update-email',allowOnlyLoggedIn,loadUpdateEmail)
 router.get('/edit-profile',allowOnlyLoggedIn,loadEditProfile)
 router.get('/addresses',allowOnlyLoggedIn,loadAddressPage)
 router.get('/add-address',allowOnlyLoggedIn,loadAddAddress)
-
+router.get('/edit-address/:id',allowOnlyLoggedIn,loadEditAddress)
 
 
 // Start Google login process

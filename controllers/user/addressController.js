@@ -92,6 +92,61 @@ const deleteAddress = async(req,res)=>{
         return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Server error'})
     }
 }
+
+
+const loadEditAddress = async(req,res)=>{
+
+    try{
+
+        const addressId = req.params.id
+        const address = await Address.findOne({_id:addressId,userId:req.session.user._id})
+
+        res.render('edit-address',{
+            title:'Edit-address',
+            address
+        })
+
+    }catch(error){
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'Serevr error'})
+    }
+}
+
+
+const updateAddressController = async(req,res)=>{
+
+    try{
+
+        const addressId = req.params.id
+        const userId = req.session.user._id
+        const {addressType,fullName,country,state,city,landmark,streetAddress,pincode,phone,email,alternativePhone} = req.body
+
+        const updateAdress = await Address.findOneAndUpdate({_id:addressId,userId},{
+            addressType,
+            fullName,
+            country,
+            state,      
+            city,
+            landmark,
+            streetAddress,
+            pincode,
+            phone,
+            email,
+            alternativePhone},
+                {new:true,runValidators:true})
+
+    //           if (!updateAdress){
+    //             return res.status(statusCodes.BAD_REQUEST).json({ success: false, message: "Address not found" });
+    // }
+            
+        
+            return res.status(statusCodes.OK).json({success:true,message:'Address updated successfully',redirect:'/addresses'})
+
+    }catch(error){
+
+        return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({success:false,message:'server Error'})
+
+    }
+}
     
 
 
@@ -100,5 +155,7 @@ module.exports = {
     loadAddressPage,
     loadAddAddress,
     addAddresscontroller,
-    deleteAddress
+    deleteAddress,
+    loadEditAddress,
+    updateAddressController
 }
